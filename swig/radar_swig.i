@@ -9,8 +9,11 @@
 
 %{
 #include "radar/signal_generator_cw_c.h"
+#include "radar/signal_generator_fmcw_c.h"
 %}
 
 
 %include "radar/signal_generator_cw_c.h"
 GR_SWIG_BLOCK_MAGIC2(radar, signal_generator_cw_c);
+%include "radar/signal_generator_fmcw_c.h"
+GR_SWIG_BLOCK_MAGIC2(radar, signal_generator_fmcw_c);
