@@ -22,5 +22,5 @@
 ########################################################################
 install(FILES
     api.h
-    DESTINATION include/radar
+    signal_generator_cw_c.h DESTINATION include/radar
 )

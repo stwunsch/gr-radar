@@ -26,6 +26,7 @@ include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 
 list(APPEND radar_sources
+    signal_generator_cw_c_impl.cc
 )
 
 set(radar_sources "${radar_sources}" PARENT_SCOPE)
