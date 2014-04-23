@@ -1,7 +1,5 @@
-gr-radar
-========
-
 GNU Radio Radar Toolbox
+========
 
 **Development platform**  
 GNU Radio 3.7.3  
