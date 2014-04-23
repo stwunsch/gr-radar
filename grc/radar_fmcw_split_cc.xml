@@ -1,0 +1,32 @@
+<block>
+  <name>FMCW split</name>
+  <key>radar_fmcw_split_cc</key>
+  <category>RADAR</category>
+  <import>import radar</import>
+  <make>radar.fmcw_split_cc($packet_part, $len_key, $info_key)</make>
+  <param>
+    <name>Packet part</name>
+    <key>packet_part</key>
+    <type>string</type>
+  </param>
+  <param>
+    <name>Length key</name>
+    <key>len_key</key>
+    <value>"packet_len"</value>
+    <type>string</type>
+  </param>
+  <param>
+    <name>FMCW info Key</name>
+    <key>info_key</key>
+    <value>"fmcw_info"</value>
+    <type>string</type>
+  </param>
+  <sink>
+    <name>IQ in</name>
+    <type>complex</type>
+  </sink>
+  <source>
+    <name>IQ out</name>
+    <type>complex</type>
+  </source>
+</block>
