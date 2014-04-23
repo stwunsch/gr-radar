@@ -343,6 +343,8 @@
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
 import radar_swig as radar
+import numpy as np
+import numpy.fft
 
 class qa_doppler_rcs_simulator_cc (gr_unittest.TestCase):
 
@@ -354,9 +356,38 @@ class qa_doppler_rcs_simulator_cc (gr_unittest.TestCase):
 
     def test_001_t (self):
         # set up fg
+        test_len = 1000
+        
+        packet_len = test_len
+        samp_rate = 2000
+        frequency = 0
+        amplitude = 1
+        
+        Range = [10]
+        velocity = [15]
+        rcs = [1e9]
+        center_freq = 1e9
+        
+        src = radar.signal_generator_cw_c(packet_len,samp_rate,frequency,amplitude)
+        head = blocks.head(8,test_len)
+        sim = radar.doppler_rcs_simulator_cc(Range, velocity, rcs, samp_rate, center_freq)
+        mult = blocks.multiply_cc()
+        snk = blocks.vector_sink_c()
+        
+        self.tb.connect(src,head,sim)
+        self.tb.connect((sim,0),(mult,0))
+        self.tb.connect((head,0),(mult,1))
+        self.tb.connect(mult,snk)
         self.tb.run ()
+        
         # check data
-
+        data = snk.data()
+        doppler_freq = 2*velocity[0]*center_freq/3e8 # peak estimation, calc with doppler formula
+        fft = numpy.fft.fft(data) # get fft
+        num = np.argmax(abs(fft)) # index of max sample
+        fft_freq = samp_rate*num/len(fft) # calc freq out of max sample index, works only for frequencies < samp_rate/2!
+        
+        self.assertAlmostEqual(fft_freq,doppler_freq,2) # check if peak in data is doppler peak
 
 if __name__ == '__main__':
     gr_unittest.run(qa_doppler_rcs_simulator_cc)#, "qa_doppler_rcs_simulator_cc.xml")
