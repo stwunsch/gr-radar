@@ -399,7 +399,7 @@ namespace gr {
 			
 			// Write sample
 			*out++ = d_amplitude*exp(d_phase);
-			d_phase = 1j*fmod(imag(d_phase)+2*M_PI*d_frequency/(float)d_samp_rate,2*M_PI);
+			d_phase = 1j*std::fmod(imag(d_phase)+2*M_PI*d_frequency/(float)d_samp_rate,2*M_PI);
 		}
 
         // Tell runtime system how many output items we produced.

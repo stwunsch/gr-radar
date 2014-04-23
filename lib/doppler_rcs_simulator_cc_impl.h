@@ -340,89 +340,41 @@
  * Public License instead of this License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#ifndef INCLUDED_RADAR_DOPPLER_RCS_SIMULATOR_CC_IMPL_H
+#define INCLUDED_RADAR_DOPPLER_RCS_SIMULATOR_CC_IMPL_H
 
-#include <gnuradio/io_signature.h>
-#include "signal_generator_fmcw_c_impl.h"
+#include <radar/doppler_rcs_simulator_cc.h>
 
 namespace gr {
   namespace radar {
 
-    signal_generator_fmcw_c::sptr
-    signal_generator_fmcw_c::make(int samp_rate, int samp_up, int samp_down, int samp_cw, float freq_cw, float freq_sweep, float amplitude)
+    class doppler_rcs_simulator_cc_impl : public doppler_rcs_simulator_cc
     {
-      return gnuradio::get_initial_sptr
-        (new signal_generator_fmcw_c_impl(samp_rate, samp_up, samp_down, samp_cw, freq_cw, freq_sweep, amplitude));
-    }
+     private:
+      // Nothing to declare in this block.
 
-    /*
-     * The private constructor
-     */
-    signal_generator_fmcw_c_impl::signal_generator_fmcw_c_impl(int samp_rate, int samp_up, int samp_down, int samp_cw, float freq_cw, float freq_sweep, float amplitude)
-      : gr::sync_block("signal_generator_fmcw_c",
-              gr::io_signature::make(0, 0, 0),
-              gr::io_signature::make(1, 1, sizeof(gr_complex)))
-    {
-		d_samp_rate = samp_rate; // sample rate of signal
-		d_samp_up = samp_up; // samples of up-chirp
-		d_samp_down = samp_down; // samples of down-chirp
-		d_samp_cw = samp_cw; // samples of cw
-		d_freq_cw = freq_cw; // cw frequency
-		d_freq_sweep = freq_sweep; // sweep frequency
-		d_amplitude = amplitude; // amplitude of signal
-		
-		d_packet_len = samp_up+samp_down+samp_cw; // length of packet, contains cw, up-chirp, down-chirp
-		d_key = pmt::string_to_symbol("packet_len"); // set tag identifier for tagged stream
-		d_value = pmt::from_long(d_packet_len); // set length of 1 cw packet as tagged stream
-		d_srcid = pmt::string_to_symbol("sig_gen_fmcw"); // set block identifier
-		
-		d_wv_counter = 0; // counts the samples written of a packet to reference in waveform vector
-		
-		// Setup waveform vector
-		// Contains cw, up-chirp, down-chirp
-		// Frequencies goes from freq_cw:freq_cw [cw] -> freq_cw:freq_cw+freq_sweep [up-chirp] -> freq_cw+freq_sweep:freq_cw [down-chirp]
-		d_waveform.resize(d_packet_len);
-		for(int k=0; k<d_samp_cw; k++) d_waveform[k] = d_freq_cw;
-		for(int k=0; k<d_samp_up; k++) d_waveform[k+d_samp_cw] = d_freq_cw+d_freq_sweep*(float)k/(float)d_samp_up;
-		for(int k=0; k<d_samp_down; k++) d_waveform[k+d_samp_cw+d_samp_up] = d_freq_cw+d_freq_sweep-d_freq_sweep*(float)k/(float)d_samp_down;
-	}
+     public:
+      doppler_rcs_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, int samp_rate, float center_freq);
+      ~doppler_rcs_simulator_cc_impl();
+      
+      std::vector<float> d_range, d_velocity, d_rcs;
+      int d_samp_rate;
+      float d_center_freq;
+      
+      int d_num_targets;
+      std::vector<gr_complex> d_phase;
+      std::vector<float> d_freq_shift, d_scale_ampl;
+      
+      float const static c_light = 3e8;
 
-    /*
-     * Our virtual destructor.
-     */
-    signal_generator_fmcw_c_impl::~signal_generator_fmcw_c_impl()
-    {
-    }
+      // Where all the action really happens
+      int work(int noutput_items,
+	       gr_vector_const_void_star &input_items,
+	       gr_vector_void_star &output_items);
+    };
 
-    int
-    signal_generator_fmcw_c_impl::work(int noutput_items,
-			  gr_vector_const_void_star &input_items,
-			  gr_vector_void_star &output_items)
-    {
-        gr_complex *out = (gr_complex *) output_items[0];
+  } // namespace radar
+} // namespace gr
 
-        // Do <+signal processing+>
-        
-        // Integrate phase for iq signal
-        for(int i=0; i<noutput_items; i++){
-			// Set tag on every packet_len-th item
-			if((nitems_written(0)+i)%d_packet_len==0){
-				add_item_tag(0, nitems_written(0)+i, d_key, d_value, d_srcid);
-				d_wv_counter = 0;
-			}
-			
-			// Write sample
-			*out++ = d_amplitude*exp(d_phase);
-			d_phase = 1j*std::fmod(imag(d_phase)+2*M_PI*d_waveform[d_wv_counter]/(float)d_samp_rate,2*M_PI);
-			d_wv_counter++;
-		}
-
-        // Tell runtime system how many output items we produced.
-        return noutput_items;
-    }
-
-  } /* namespace radar */
-} /* namespace gr */
+#endif /* INCLUDED_RADAR_DOPPLER_RCS_SIMULATOR_CC_IMPL_H */
 

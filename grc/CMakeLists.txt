@@ -19,5 +19,6 @@
 
 install(FILES
     radar_signal_generator_cw_c.xml
-    radar_signal_generator_fmcw_c.xml DESTINATION share/gnuradio/grc/blocks
+    radar_signal_generator_fmcw_c.xml
+    radar_doppler_rcs_simulator_cc.xml DESTINATION share/gnuradio/grc/blocks
 )
