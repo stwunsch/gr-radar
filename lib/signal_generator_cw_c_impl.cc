@@ -351,16 +351,16 @@ namespace gr {
   namespace radar {
 
     signal_generator_cw_c::sptr
-    signal_generator_cw_c::make(int packet_len, int samp_rate, float frequency, float amplitude)
+    signal_generator_cw_c::make(int packet_len, int samp_rate, float frequency, float amplitude, const std::string& len_key)
     {
       return gnuradio::get_initial_sptr
-        (new signal_generator_cw_c_impl(packet_len, samp_rate, frequency, amplitude));
+        (new signal_generator_cw_c_impl(packet_len, samp_rate, frequency, amplitude, len_key));
     }
 
     /*
      * The private constructor
      */
-    signal_generator_cw_c_impl::signal_generator_cw_c_impl(int packet_len, int samp_rate, float frequency, float amplitude)
+    signal_generator_cw_c_impl::signal_generator_cw_c_impl(int packet_len, int samp_rate, float frequency, float amplitude, const std::string& len_key)
       : gr::sync_block("signal_generator_cw_c",
               gr::io_signature::make(0, 0, 0),
               gr::io_signature::make(1, 1, sizeof(gr_complex)))
@@ -370,7 +370,7 @@ namespace gr {
 		d_frequency = frequency; // frequency of the cw signal in baseband
 		d_amplitude = amplitude; // amplitude of the cw signal
 		
-		d_key = pmt::string_to_symbol("packet_len"); // set tag identifier for tagged stream
+		d_key = pmt::string_to_symbol(len_key); // set tag identifier for tagged stream
 		d_value = pmt::from_long(packet_len); // set length of 1 cw packet as tagged stream
 		d_srcid = pmt::string_to_symbol("sig_gen_cw"); // set block identifier
 		d_phase = (0,0); // set start phase to 0

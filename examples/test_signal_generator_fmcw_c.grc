@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Wed Apr 23 09:21:31 2014</timestamp>
+  <timestamp>Wed Apr 23 14:04:46 2014</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -264,6 +264,10 @@
       <value>1</value>
     </param>
     <param>
+      <key>info_key</key>
+      <value>"fmcw_info"</value>
+    </param>
+    <param>
       <key>affinity</key>
       <value></value>
     </param>
@@ -277,7 +281,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(57, 397)</value>
+      <value>(57, 390)</value>
     </param>
     <param>
       <key>_rotation</key>

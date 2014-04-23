@@ -3,7 +3,7 @@
   <key>radar_signal_generator_fmcw_c</key>
   <category>RADAR</category>
   <import>import radar</import>
-  <make>radar.signal_generator_fmcw_c($samp_rate, $samp_up, $samp_down, $samp_cw, $freq_cw, $freq_sweep, $amplitude)</make>
+  <make>radar.signal_generator_fmcw_c($samp_rate, $samp_up, $samp_down, $samp_cw, $freq_cw, $freq_sweep, $amplitude, $len_key, $info_key)</make>
   <param>
     <name>Sample rate</name>
     <key>samp_rate</key>
@@ -38,6 +38,18 @@
     <name>Amplitude</name>
     <key>amplitude</key>
     <type>float</type>
+  </param>
+  <param>
+    <name>Packet length key</name>
+    <key>len_key</key>
+    <value>"packet_len"</value>
+    <type>string</type>
+  </param>
+  <param>
+    <name>FMCW info key</name>
+    <key>info_key</key>
+    <value>"fmcw_info"</value>
+    <type>string</type>
   </param>
   <source>
     <name>IQ out</name>

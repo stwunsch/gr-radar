@@ -354,7 +354,7 @@ namespace gr {
       // Nothing to declare in this block.
 
      public:
-      signal_generator_cw_c_impl(int packet_len, int samp_rate, float frequency, float amplitude);
+      signal_generator_cw_c_impl(int packet_len, int samp_rate, float frequency, float amplitude, const std::string& len_key);
       ~signal_generator_cw_c_impl();
       
       int d_packet_len, d_samp_rate;
