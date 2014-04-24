@@ -340,40 +340,91 @@
  * Public License instead of this License.
  */
 
-#ifndef INCLUDED_RADAR_FMCW_SPLIT_CC_IMPL_H
-#define INCLUDED_RADAR_FMCW_SPLIT_CC_IMPL_H
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-#include <radar/fmcw_split_cc.h>
+#include <gnuradio/io_signature.h>
+#include "split_cc_impl.h"
 
 namespace gr {
   namespace radar {
 
-    class fmcw_split_cc_impl : public fmcw_split_cc
+    split_cc::sptr
+    split_cc::make(int packet_part, const std::string& info_key, const std::string& len_key)
     {
-     private:
-      // Nothing to declare in this block.
+      return gnuradio::get_initial_sptr
+        (new split_cc_impl(packet_part, info_key, len_key));
+    }
 
-     protected:
-      int calculate_output_stream_length(const gr_vector_int &ninput_items);
+    /*
+     * The private constructor
+     */
+    split_cc_impl::split_cc_impl(int packet_part, const std::string& info_key, const std::string& len_key)
+      : gr::tagged_stream_block("split_cc",
+              gr::io_signature::make(1, 1, sizeof(gr_complex)),
+              gr::io_signature::make(1, 1, sizeof(gr_complex)), len_key)
+    {
+		// Set key for info pmt and store packet_part identifier
+		d_info_key = pmt::string_to_symbol(info_key);
+		d_packet_part = packet_part;
+	}
 
-     public:
-      fmcw_split_cc_impl(const std::string& packet_part, const std::string& len_key, const std::string& info_key);
-      ~fmcw_split_cc_impl();
-      
-      std::vector<tag_t> d_tags;
-      pmt::pmt_t d_info_key;
-      std::vector<uint16_t> d_samples;
-      std::string d_packet_part;
+    /*
+     * Our virtual destructor.
+     */
+    split_cc_impl::~split_cc_impl()
+    {
+    }
 
-      // Where all the action really happens
-      int work(int noutput_items,
-		       gr_vector_int &ninput_items,
-		       gr_vector_const_void_star &input_items,
-		       gr_vector_void_star &output_items);
-    };
+    int
+    split_cc_impl::calculate_output_stream_length(const gr_vector_int &ninput_items)
+    {
+      int noutput_items = ninput_items[0];
+      return noutput_items ;
+    }
 
-  } // namespace radar
-} // namespace gr
+    int
+    split_cc_impl::work (int noutput_items,
+                       gr_vector_int &ninput_items,
+                       gr_vector_const_void_star &input_items,
+                       gr_vector_void_star &output_items)
+    {
+        const gr_complex *in = (const gr_complex *) input_items[0];
+        gr_complex *out = (gr_complex *) output_items[0];
 
-#endif /* INCLUDED_RADAR_FMCW_SPLIT_CC_IMPL_H */
+        // Do <+signal processing+>
+        
+        // Get tags in range
+        get_tags_in_range(d_tags, 0, nitems_read(0), nitems_read(0)+1, d_info_key);
+        
+        // Do if num of tag with key info_key is found and > 1
+        if(d_tags.size()>0){
+			d_samples.clear();
+			d_samples = pmt::u16vector_elements(d_tags[0].value); // read info tag
+			if(d_packet_part<d_samples.size()){ // if packet_part is in range of info tag len
+				noutput_items = d_samples[d_packet_part]; // get num output items
+				update_length_tags(d_samples[d_packet_part],0); // update length tag
+				
+				d_offset = 0; // calc offset in stream
+				for(int k=0; k<d_packet_part; k++) d_offset += d_samples[k];
+				
+				for(int k=0; k<noutput_items; k++) out[k] = in[k+d_offset]; // push items to output
+			}
+			else{
+				std::cout << "ERROR: wrong info tag [split_cc]" << std::endl; // FIXME: throw better exception
+				noutput_items = 0;
+			}
+		}
+		else{
+			std::cout << "ERROR: no info tag found [split_cc]" << std::endl; // FIXME: throw better exception
+			noutput_items = 0;
+		}
+
+        // Tell runtime system how many output items we produced.
+        return noutput_items;
+    }
+
+  } /* namespace radar */
+} /* namespace gr */
 

@@ -344,7 +344,7 @@ from gnuradio import gr, gr_unittest
 from gnuradio import blocks
 import radar_swig as radar
 
-class qa_fmcw_split_cc (gr_unittest.TestCase):
+class qa_split_cc (gr_unittest.TestCase):
 
 	def setUp (self):
 		self.tb = gr.top_block ()
@@ -354,46 +354,36 @@ class qa_fmcw_split_cc (gr_unittest.TestCase):
 
 	def test_001_t (self):
 		# set up fg
-		
-		samp_up = 100
-		samp_down = 200
 		samp_cw = 300
+		samp_up = 200
+		samp_down = 100
 		
 		mult = 3
-		test_len = (samp_up+samp_down+samp_cw)*mult
+		test_len = (samp_cw+samp_up+samp_down)*mult
 		
-		freq_cw = 500
-		freq_sweep = 500
 		samp_rate = 2000
-		amplitude = 1
 		len_key = "packet_len"
 		info_key = "fmcw_info"
-		packet_part1 = "cw"
-		packet_part2 = "up"
-		packet_part3 = "down"
 		
-		src = radar.signal_generator_fmcw_c(samp_rate, samp_up, samp_down, samp_cw, freq_cw, freq_sweep, amplitude, len_key, info_key)
+		src = radar.signal_generator_fmcw_c(samp_rate, samp_up, samp_down, samp_cw, 500, 250, 1, len_key, info_key);
 		head = blocks.head(8,test_len)
-		split1 = radar.fmcw_split_cc(packet_part1, len_key, info_key)
-		split2 = radar.fmcw_split_cc(packet_part2, len_key, info_key)
-		split3 = radar.fmcw_split_cc(packet_part3, len_key, info_key)
+		split0 = radar.split_cc(0,info_key,len_key)
+		split1 = radar.split_cc(1,info_key,len_key)
+		split2 = radar.split_cc(2,info_key,len_key)
+		snk0 = blocks.vector_sink_c()
 		snk1 = blocks.vector_sink_c()
 		snk2 = blocks.vector_sink_c()
-		snk3 = blocks.vector_sink_c()
 		
-		self.tb.connect(src,head,split1,snk1)
+		self.tb.connect(src,head)
+		self.tb.connect(head,split0,snk0)
+		self.tb.connect(head,split1,snk1)
 		self.tb.connect(head,split2,snk2)
-		self.tb.connect(head,split3,snk3)
 		self.tb.run ()
 		
 		# check data
-		data1 = snk1.data() # cw data
-		data2 = snk2.data() # up-chirp data
-		data3 = snk3.data() # down-chirp data
-		
-		self.assertEqual(len(data1),mult*samp_cw) # check if the correct number of items is in sink
-		self.assertEqual(len(data2),mult*samp_up)
-		self.assertEqual(len(data3),mult*samp_down)
+		self.assertEqual(len(snk0.data()),mult*samp_cw) # check correct number of samples in every sink
+		self.assertEqual(len(snk1.data()),mult*samp_up)
+		self.assertEqual(len(snk2.data()),mult*samp_down)
 
 if __name__ == '__main__':
-	gr_unittest.run(qa_fmcw_split_cc)#, "qa_fmcw_split_cc.xml")
+	gr_unittest.run(qa_split_cc)#, "qa_split_cc.xml")

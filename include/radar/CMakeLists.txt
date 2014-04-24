@@ -25,5 +25,5 @@ install(FILES
     signal_generator_cw_c.h
     signal_generator_fmcw_c.h
     doppler_rcs_simulator_cc.h
-    fmcw_split_cc.h DESTINATION include/radar
+    split_cc.h DESTINATION include/radar
 )

@@ -340,99 +340,39 @@
  * Public License instead of this License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
-#include <gnuradio/io_signature.h>
-#include "fmcw_split_cc_impl.h"
-#include <iostream>
+#ifndef INCLUDED_RADAR_SPLIT_CC_H
+#define INCLUDED_RADAR_SPLIT_CC_H
+
+#include <radar/api.h>
+#include <gnuradio/tagged_stream_block.h>
 
 namespace gr {
   namespace radar {
 
-    fmcw_split_cc::sptr
-    fmcw_split_cc::make(const std::string& packet_part, const std::string& len_key, const std::string& info_key)
-    {
-      return gnuradio::get_initial_sptr
-        (new fmcw_split_cc_impl(packet_part, len_key, info_key));
-    }
-
-    /*
-     * The private constructor
+    /*!
+     * \brief <+description of block+>
+     * \ingroup radar
+     *
      */
-    fmcw_split_cc_impl::fmcw_split_cc_impl(const std::string& packet_part, const std::string& len_key, const std::string& info_key)
-      : gr::tagged_stream_block("fmcw_split_cc",
-              gr::io_signature::make(1, 1, sizeof(gr_complex)),
-              gr::io_signature::make(1, 1, sizeof(gr_complex)), len_key)
+    class RADAR_API split_cc : virtual public gr::tagged_stream_block
     {
-		// Set key for info pmt and store packet_part identifier
-		d_info_key = pmt::string_to_symbol(info_key);
-		d_packet_part = packet_part;
-		
-		// Resize vector to 3 for num samples of cw, up-chirp, down-chirp
-		d_samples.resize(3);
-	}
+     public:
+      typedef boost::shared_ptr<split_cc> sptr;
 
-    /*
-     * Our virtual destructor.
-     */
-    fmcw_split_cc_impl::~fmcw_split_cc_impl()
-    {
-    }
+      /*!
+       * \brief Return a shared_ptr to a new instance of radar::split_cc.
+       *
+       * To avoid accidental use of raw pointers, radar::split_cc's
+       * constructor is in a private implementation
+       * class. radar::split_cc::make is the public interface for
+       * creating new instances.
+       */
+      static sptr make(int packet_part, const std::string& info_key, const std::string& len_key="packet_len");
+    };
 
-    int
-    fmcw_split_cc_impl::calculate_output_stream_length(const gr_vector_int &ninput_items)
-    {
-      int noutput_items = ninput_items[0];
-      return noutput_items ;
-    }
+  } // namespace radar
+} // namespace gr
 
-    int
-    fmcw_split_cc_impl::work (int noutput_items,
-                       gr_vector_int &ninput_items,
-                       gr_vector_const_void_star &input_items,
-                       gr_vector_void_star &output_items)
-    {
-        const gr_complex *in = (const gr_complex *) input_items[0];
-        gr_complex *out = (gr_complex *) output_items[0];
-
-        // Do <+signal processing+>
-        
-        get_tags_in_range(d_tags, 0, nitems_read(0), nitems_read(0)+1, d_info_key); // get tags on the first item with info_key identifier
-        
-        if(d_tags.size()==1){ // if there is exact 1 fmcw_info tag
-			d_samples.clear();
-			d_samples = pmt::u16vector_elements(d_tags[0].value); // read fmcw_info tag
-			if(d_packet_part=="cw"){ // cw
-				noutput_items = d_samples[0]; // get num output items
-				update_length_tags(d_samples[0],0); // update length tag
-				for(int k=0; k<noutput_items; k++) out[k] = in[k]; // push items to output
-			}
-			else if(d_packet_part=="up"){ // up-chirp
-				noutput_items = d_samples[1]; // get num output items
-				update_length_tags(d_samples[1],0); // update length tag
-				for(int k=0; k<noutput_items; k++) out[k] = in[k+d_samples[0]]; // push items to output
-			}
-			else if(d_packet_part=="down"){ // down-chirp
-				noutput_items = d_samples[2]; // get num output items
-				update_length_tags(d_samples[2],0); // update length tag
-				for(int k=0; k<noutput_items; k++) out[k] = in[k+d_samples[0]+d_samples[1]]; // push items to output
-			}
-			else{
-				std::cout << "ERROR: wrong fmcw_info tag [fmcw_split_cc]" << std::endl; // FIXME: throw better exception
-				noutput_items = 0;
-			}
-		}
-		else{
-			std::cout << "ERROR: no fmcw info tag found [fmcw_split_cc]" << std::endl; // FIXME: throw better exception
-			noutput_items = 0;
-		}
-
-        // Tell runtime system how many output items we produced.
-        return noutput_items;
-    }
-
-  } /* namespace radar */
-} /* namespace gr */
+#endif /* INCLUDED_RADAR_SPLIT_CC_H */
 

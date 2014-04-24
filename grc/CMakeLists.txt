@@ -16,10 +16,9 @@
 # along with GNU Radio; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
-
 install(FILES
     radar_signal_generator_cw_c.xml
     radar_signal_generator_fmcw_c.xml
     radar_doppler_rcs_simulator_cc.xml
-    radar_fmcw_split_cc.xml DESTINATION share/gnuradio/grc/blocks
+    radar_split_cc.xml DESTINATION share/gnuradio/grc/blocks
 )

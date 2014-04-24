@@ -24,13 +24,11 @@ include(GrPlatform) #define LIB_SUFFIX
 
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
-
 list(APPEND radar_sources
     signal_generator_cw_c_impl.cc
     signal_generator_fmcw_c_impl.cc
     doppler_rcs_simulator_cc_impl.cc
-    fmcw_split_cc_impl.cc
-)
+    split_cc_impl.cc )
 
 set(radar_sources "${radar_sources}" PARENT_SCOPE)
 if(NOT radar_sources)

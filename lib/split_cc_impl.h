@@ -340,39 +340,40 @@
  * Public License instead of this License.
  */
 
+#ifndef INCLUDED_RADAR_SPLIT_CC_IMPL_H
+#define INCLUDED_RADAR_SPLIT_CC_IMPL_H
 
-#ifndef INCLUDED_RADAR_FMCW_SPLIT_CC_H
-#define INCLUDED_RADAR_FMCW_SPLIT_CC_H
-
-#include <radar/api.h>
-#include <gnuradio/tagged_stream_block.h>
+#include <radar/split_cc.h>
 
 namespace gr {
   namespace radar {
 
-    /*!
-     * \brief <+description of block+>
-     * \ingroup radar
-     *
-     */
-    class RADAR_API fmcw_split_cc : virtual public gr::tagged_stream_block
+    class split_cc_impl : public split_cc
     {
-     public:
-      typedef boost::shared_ptr<fmcw_split_cc> sptr;
+     private:
+      // Nothing to declare in this block.
 
-      /*!
-       * \brief Return a shared_ptr to a new instance of radar::fmcw_split_cc.
-       *
-       * To avoid accidental use of raw pointers, radar::fmcw_split_cc's
-       * constructor is in a private implementation
-       * class. radar::fmcw_split_cc::make is the public interface for
-       * creating new instances.
-       */
-      static sptr make(const std::string& packet_part, const std::string& len_key="packet_len", const std::string& info_key="fmcw_info");
+     protected:
+      int calculate_output_stream_length(const gr_vector_int &ninput_items);
+
+     public:
+      split_cc_impl(int packet_part, const std::string& info_key, const std::string& len_key);
+      ~split_cc_impl();
+      
+      int d_packet_part, d_offset;
+      std::vector<tag_t> d_tags;
+      pmt::pmt_t d_info_key;
+      std::vector<uint16_t> d_samples;
+
+      // Where all the action really happens
+      int work(int noutput_items,
+		       gr_vector_int &ninput_items,
+		       gr_vector_const_void_star &input_items,
+		       gr_vector_void_star &output_items);
     };
 
   } // namespace radar
 } // namespace gr
 
-#endif /* INCLUDED_RADAR_FMCW_SPLIT_CC_H */
+#endif /* INCLUDED_RADAR_SPLIT_CC_IMPL_H */
 
