@@ -363,7 +363,10 @@ namespace gr {
       int d_samp_compare, d_samp_protect, d_samp_rate;
       float d_rel_threshold, d_mult_threshold;
       
-      pmt::pmt_t port_id;
+      std::vector<float> d_pks, d_freq, d_hold_samp;
+      
+      pmt::pmt_t d_port_id;
+      pmt::pmt_t d_ptimestamp,d_pfreq,d_ppks,d_value;
 
       // Where all the action really happens
       int work(int noutput_items,

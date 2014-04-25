@@ -372,8 +372,8 @@ namespace gr {
 		d_mult_threshold = mult_threshold;
 		
 		// Register message port
-		port_id = pmt::mp(msg_out);
-		message_port_register_out(port_id);
+		d_port_id = pmt::mp(msg_out);
+		message_port_register_out(d_port_id);
 	}
 
     /*
@@ -400,9 +400,42 @@ namespace gr {
 
         // Do <+signal processing+>
         
+        // OS-CFAR detection
+        d_freq.clear();
+        d_pks.clear();
+		
         for(int k=0; k<ninput_items[0]; k++){ // go through input
-			
+			d_hold_samp.clear();
+			for(int l=1; l<d_samp_compare+1; l++){ // go through samples to compare, care: num of samp_compare is doubled! redef if too confusing
+				if(k-l-d_samp_protect<0){ // push-back zeros for underflows
+					d_hold_samp.push_back(0);
+				}
+				else{ // push back abs-square
+					d_hold_samp.push_back(pow(abs(in[k-l-d_samp_protect]),2));
+				}
+				if(k+l+d_samp_protect>=ninput_items[0]){ // push-back zeros for overflows
+					d_hold_samp.push_back(0);
+				}
+				else{ // push back abs-square
+					d_hold_samp.push_back(pow(abs(in[k+l+d_samp_protect]),2));
+				}
+			}
+			std::sort(d_hold_samp.begin(),d_hold_samp.end()); // sort sample vector
+			if(pow(abs(in[k]),2)>d_hold_samp[(int)((2*d_samp_compare-1)*d_rel_threshold)]*d_mult_threshold){ // check if in[k] is over dynamic threshold multiplied with mult_threshold
+				if(k<=ninput_items[0]/2) d_freq.push_back(k*d_samp_rate/(float)ninput_items[0]); // add frequency to message vector d_freq
+				else d_freq.push_back(-(float)d_samp_rate+k*d_samp_rate/(float)ninput_items[0]);
+				d_pks.push_back(pow(abs(in[k]),2)); // add abs-square to message vector d_pks
+			}
 		}
+		
+		// setup msg pmt
+		d_ptimestamp = pmt::from_long(0); // FIXME: better timestamp!
+		d_pfreq = pmt::init_f32vector(d_freq.size(),d_freq);
+		d_ppks = pmt::init_f32vector(d_pks.size(),d_pks);
+		d_value = pmt::list3(d_ptimestamp,d_pfreq,d_ppks);
+		
+		// publish message
+		message_port_pub(d_port_id,d_value);
 
         // Tell runtime system how many output items we produced.
         return noutput_items;
