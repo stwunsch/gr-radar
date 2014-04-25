@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Wed Apr 23 12:27:39 2014</timestamp>
+  <timestamp>Fri Apr 25 14:40:43 2014</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -64,7 +64,7 @@
     <key>variable</key>
     <param>
       <key>id</key>
-      <value>packet_len</value>
+      <value>center_freq</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -72,34 +72,11 @@
     </param>
     <param>
       <key>value</key>
-      <value>4096</value>
+      <value>1e9</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(396, 12)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>id</key>
-      <value>samp_rate</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>125000</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(188, 10)</value>
+      <value>(292, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -133,7 +110,7 @@
     <key>variable</key>
     <param>
       <key>id</key>
-      <value>center_freq</value>
+      <value>samp_rate</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -141,11 +118,11 @@
     </param>
     <param>
       <key>value</key>
-      <value>1e9</value>
+      <value>125000</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(292, 12)</value>
+      <value>(188, 10)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -153,46 +130,22 @@
     </param>
   </block>
   <block>
-    <key>radar_signal_generator_cw_c</key>
+    <key>variable</key>
     <param>
       <key>id</key>
-      <value>radar_signal_generator_cw_c_0</value>
+      <value>packet_len</value>
     </param>
     <param>
       <key>_enabled</key>
       <value>True</value>
     </param>
     <param>
-      <key>packet_len</key>
-      <value>packet_len</value>
-    </param>
-    <param>
-      <key>samp_rate</key>
-      <value>samp_rate</value>
-    </param>
-    <param>
-      <key>frequency</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>amplitude</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
+      <key>value</key>
+      <value>4096</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(45, 220)</value>
+      <value>(396, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -431,34 +384,18 @@
     </param>
   </block>
   <block>
-    <key>rational_resampler_xxx</key>
+    <key>radar_ts_fft_cc</key>
     <param>
       <key>id</key>
-      <value>rational_resampler_xxx_0</value>
+      <value>radar_ts_fft_cc_0</value>
     </param>
     <param>
       <key>_enabled</key>
       <value>True</value>
     </param>
     <param>
-      <key>type</key>
-      <value>ccc</value>
-    </param>
-    <param>
-      <key>interp</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>decim</key>
-      <value>decimator_fac</value>
-    </param>
-    <param>
-      <key>taps</key>
-      <value></value>
-    </param>
-    <param>
-      <key>fbw</key>
-      <value>0</value>
+      <key>len_key</key>
+      <value> "packet_len"</value>
     </param>
     <param>
       <key>affinity</key>
@@ -474,7 +411,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(744, 454)</value>
+      <value>(568, 490)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -482,170 +419,33 @@
     </param>
   </block>
   <block>
-    <key>blocks_stream_to_vector</key>
+    <key>radar_signal_generator_cw_c</key>
     <param>
       <key>id</key>
-      <value>blocks_stream_to_vector_0</value>
+      <value>radar_signal_generator_cw_c_0</value>
     </param>
     <param>
       <key>_enabled</key>
       <value>True</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
-    </param>
-    <param>
-      <key>num_items</key>
-      <value>packet_len/decimator_fac</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(541, 478)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
-    </param>
-  </block>
-  <block>
-    <key>fft_vxx</key>
-    <param>
-      <key>id</key>
-      <value>fft_vxx_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
-    </param>
-    <param>
-      <key>fft_size</key>
-      <value>packet_len/decimator_fac</value>
-    </param>
-    <param>
-      <key>forward</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>window</key>
-      <value>window.blackmanharris(packet_len/decimator_fac)</value>
-    </param>
-    <param>
-      <key>shift</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>nthreads</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(263, 446)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_vector_to_stream</key>
-    <param>
-      <key>id</key>
-      <value>blocks_vector_to_stream_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
-    </param>
-    <param>
-      <key>num_items</key>
-      <value>packet_len/decimator_fac</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(64, 478)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_stream_to_tagged_stream</key>
-    <param>
-      <key>id</key>
-      <value>blocks_stream_to_tagged_stream_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
     </param>
     <param>
       <key>packet_len</key>
-      <value>packet_len/decimator_fac</value>
+      <value>packet_len</value>
     </param>
     <param>
-      <key>len_tag_key</key>
+      <key>samp_rate</key>
+      <value>samp_rate</value>
+    </param>
+    <param>
+      <key>frequency</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>amplitude</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>len_key</key>
       <value>"packet_len"</value>
     </param>
     <param>
@@ -662,11 +462,70 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(70, 599)</value>
+      <value>(25, 192)</value>
     </param>
     <param>
       <key>_rotation</key>
       <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>radar_os_cfar_c</key>
+    <param>
+      <key>id</key>
+      <value>radar_os_cfar_c_0</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>samp_rate</key>
+      <value>samp_rate</value>
+    </param>
+    <param>
+      <key>samp_compare</key>
+      <value>5</value>
+    </param>
+    <param>
+      <key>samp_protect</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>rel_threshold</key>
+      <value>0.78</value>
+    </param>
+    <param>
+      <key>mult_threshold</key>
+      <value>5</value>
+    </param>
+    <param>
+      <key>len_key</key>
+      <value>"packet_len"</value>
+    </param>
+    <param>
+      <key>msg_out</key>
+      <value>"cfar_out"</value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(274, 442)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
     </param>
   </block>
   <connection>
@@ -706,32 +565,14 @@
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>fft_vxx_0</source_block_id>
-    <sink_block_id>blocks_vector_to_stream_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
     <source_block_id>blocks_multiply_xx_0</source_block_id>
-    <sink_block_id>rational_resampler_xxx_0</sink_block_id>
+    <sink_block_id>radar_ts_fft_cc_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>rational_resampler_xxx_0</source_block_id>
-    <sink_block_id>blocks_stream_to_vector_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_stream_to_vector_0</source_block_id>
-    <sink_block_id>fft_vxx_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_vector_to_stream_0</source_block_id>
-    <sink_block_id>blocks_stream_to_tagged_stream_0</sink_block_id>
+    <source_block_id>radar_ts_fft_cc_0</source_block_id>
+    <sink_block_id>radar_os_cfar_c_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

@@ -46,3 +46,4 @@ GR_ADD_TEST(qa_signal_generator_fmcw_c ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOUR
 GR_ADD_TEST(qa_doppler_rcs_simulator_cc ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_doppler_rcs_simulator_cc.py)
 GR_ADD_TEST(qa_split_cc ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_split_cc.py)
 GR_ADD_TEST(qa_os_cfar_c ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_os_cfar_c.py)
+GR_ADD_TEST(qa_ts_fft_cc ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_ts_fft_cc.py)

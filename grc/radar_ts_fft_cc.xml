@@ -1,0 +1,21 @@
+<block>
+  <name>Tagged stream FFT</name>
+  <key>radar_ts_fft_cc</key>
+  <category>RADAR</category>
+  <import>import radar</import>
+  <make>radar.ts_fft_cc($len_key)</make>
+  <param>
+    <name>Packet length key</name>
+    <key>len_key</key>
+    <value> "packet_len"</value>
+    <type>string</type>
+  </param>
+  <sink>
+    <name>IQ in</name>
+    <type>complex</type>
+  </sink>
+  <source>
+    <name>IQ out</name>
+    <type>complex</type>
+  </source>
+</block>

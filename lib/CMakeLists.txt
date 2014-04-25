@@ -29,7 +29,8 @@ list(APPEND radar_sources
     signal_generator_fmcw_c_impl.cc
     doppler_rcs_simulator_cc_impl.cc
     split_cc_impl.cc
-    os_cfar_c_impl.cc )
+    os_cfar_c_impl.cc
+    ts_fft_cc_impl.cc )
 
 set(radar_sources "${radar_sources}" PARENT_SCOPE)
 if(NOT radar_sources)
@@ -38,7 +39,7 @@ if(NOT radar_sources)
 endif(NOT radar_sources)
 
 add_library(gnuradio-radar SHARED ${radar_sources})
-target_link_libraries(gnuradio-radar ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES})
+target_link_libraries(gnuradio-radar ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES} ${FFTW3F_LIBRARIES})
 set_target_properties(gnuradio-radar PROPERTIES DEFINE_SYMBOL "gnuradio_radar_EXPORTS")
 
 if(APPLE)
@@ -75,6 +76,7 @@ target_link_libraries(
   ${GNURADIO_RUNTIME_LIBRARIES}
   ${Boost_LIBRARIES}
   ${CPPUNIT_LIBRARIES}
+  ${FFTW3F_LIBRARY_DIRS}
   gnuradio-radar
 )
 

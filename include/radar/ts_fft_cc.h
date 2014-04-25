@@ -340,107 +340,39 @@
  * Public License instead of this License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
-#include <gnuradio/io_signature.h>
-#include "os_cfar_c_impl.h"
+#ifndef INCLUDED_RADAR_TS_FFT_CC_H
+#define INCLUDED_RADAR_TS_FFT_CC_H
+
+#include <radar/api.h>
+#include <gnuradio/tagged_stream_block.h>
 
 namespace gr {
   namespace radar {
 
-    os_cfar_c::sptr
-    os_cfar_c::make(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& len_key, const std::string& msg_out)
-    {
-      return gnuradio::get_initial_sptr
-        (new os_cfar_c_impl(samp_rate, samp_compare, samp_protect, rel_threshold, mult_threshold, len_key, msg_out));
-    }
-
-    /*
-     * The private constructor
+    /*!
+     * \brief <+description of block+>
+     * \ingroup radar
+     *
      */
-    os_cfar_c_impl::os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& len_key, const std::string& msg_out)
-      : gr::tagged_stream_block("os_cfar_c",
-              gr::io_signature::make(1, 1, sizeof(gr_complex)),
-              gr::io_signature::make(0, 0, 0), len_key)
+    class RADAR_API ts_fft_cc : virtual public gr::tagged_stream_block
     {
-		d_samp_rate = samp_rate;
-		d_samp_compare = samp_compare;
-		d_samp_protect = samp_protect;
-		d_rel_threshold = rel_threshold;
-		d_mult_threshold = mult_threshold;
-		
-		// Register message port
-		d_port_id = pmt::mp(msg_out);
-		message_port_register_out(d_port_id);
-	}
+     public:
+      typedef boost::shared_ptr<ts_fft_cc> sptr;
 
-    /*
-     * Our virtual destructor.
-     */
-    os_cfar_c_impl::~os_cfar_c_impl()
-    {
-    }
+      /*!
+       * \brief Return a shared_ptr to a new instance of radar::ts_fft_cc.
+       *
+       * To avoid accidental use of raw pointers, radar::ts_fft_cc's
+       * constructor is in a private implementation
+       * class. radar::ts_fft_cc::make is the public interface for
+       * creating new instances.
+       */
+      static sptr make(const std::string& len_key = "packet_len");
+    };
 
-    int
-    os_cfar_c_impl::calculate_output_stream_length(const gr_vector_int &ninput_items)
-    {
-      int noutput_items = 0;
-      return noutput_items ;
-    }
+  } // namespace radar
+} // namespace gr
 
-    int
-    os_cfar_c_impl::work (int noutput_items,
-                       gr_vector_int &ninput_items,
-                       gr_vector_const_void_star &input_items,
-                       gr_vector_void_star &output_items)
-    {
-        const gr_complex *in = (const gr_complex *) input_items[0];
-
-        // Do <+signal processing+>
-        
-        // OS-CFAR detection
-        d_freq.clear();
-        d_pks.clear();
-		
-        for(int k=0; k<ninput_items[0]; k++){ // go through input
-			d_hold_samp.clear();
-			for(int l=1; l<d_samp_compare+1; l++){ // go through samples to compare, care: num of samp_compare is doubled! redef if too confusing
-				if(k-l-d_samp_protect<0){ // push-back zeros for underflows
-					d_hold_samp.push_back(0);
-				}
-				else{ // push back abs-square
-					d_hold_samp.push_back(pow(abs(in[k-l-d_samp_protect]),2));
-				}
-				if(k+l+d_samp_protect>=ninput_items[0]){ // push-back zeros for overflows
-					d_hold_samp.push_back(0);
-				}
-				else{ // push back abs-square
-					d_hold_samp.push_back(pow(abs(in[k+l+d_samp_protect]),2));
-				}
-			}
-			std::sort(d_hold_samp.begin(),d_hold_samp.end()); // sort sample vector
-			if(pow(abs(in[k]),2)>d_hold_samp[(int)((2*d_samp_compare-1)*d_rel_threshold)]*d_mult_threshold){ // check if in[k] is over dynamic threshold multiplied with mult_threshold
-				if(k<=ninput_items[0]/2) d_freq.push_back(k*d_samp_rate/(float)ninput_items[0]); // add frequency to message vector d_freq
-				else d_freq.push_back(-(float)d_samp_rate+k*d_samp_rate/(float)ninput_items[0]);
-				d_pks.push_back(pow(abs(in[k]),2)); // add abs-square to message vector d_pks
-			}
-		}
-		
-		// setup msg pmt
-		d_ptimestamp = pmt::from_long(0); // FIXME: better timestamp!
-		d_pfreq = pmt::init_f32vector(d_freq.size(),d_freq);
-		d_ppks = pmt::init_f32vector(d_pks.size(),d_pks);
-		d_value = pmt::list3(d_ptimestamp,d_pfreq,d_ppks);
-		
-		// publish message
-		message_port_pub(d_port_id,d_value);
-
-        // Tell runtime system how many output items we produced.
-        return noutput_items;
-    }
-
-  } /* namespace radar */
-} /* namespace gr */
+#endif /* INCLUDED_RADAR_TS_FFT_CC_H */
 
