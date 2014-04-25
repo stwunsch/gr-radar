@@ -340,39 +340,40 @@
  * Public License instead of this License.
  */
 
+#ifndef INCLUDED_RADAR_OS_CFAR_C_IMPL_H
+#define INCLUDED_RADAR_OS_CFAR_C_IMPL_H
 
-#ifndef INCLUDED_RADAR_SPLIT_CC_H
-#define INCLUDED_RADAR_SPLIT_CC_H
-
-#include <radar/api.h>
-#include <gnuradio/tagged_stream_block.h>
+#include <radar/os_cfar_c.h>
 
 namespace gr {
   namespace radar {
 
-    /*!
-     * \brief <+description of block+>
-     * \ingroup radar
-     *
-     */
-    class RADAR_API split_cc : virtual public gr::tagged_stream_block
+    class os_cfar_c_impl : public os_cfar_c
     {
-     public:
-      typedef boost::shared_ptr<split_cc> sptr;
+     private:
+      // Nothing to declare in this block.
 
-      /*!
-       * \brief Return a shared_ptr to a new instance of radar::split_cc.
-       *
-       * To avoid accidental use of raw pointers, radar::split_cc's
-       * constructor is in a private implementation
-       * class. radar::split_cc::make is the public interface for
-       * creating new instances.
-       */
-      static sptr make(uint16_t packet_num, const std::vector<uint16_t> packet_parts, const std::string& len_key="packet_len");
+     protected:
+      int calculate_output_stream_length(const gr_vector_int &ninput_items);
+
+     public:
+      os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& len_key, const std::string& msg_out);
+      ~os_cfar_c_impl();
+      
+      int d_samp_compare, d_samp_protect, d_samp_rate;
+      float d_rel_threshold, d_mult_threshold;
+      
+      pmt::pmt_t port_id;
+
+      // Where all the action really happens
+      int work(int noutput_items,
+		       gr_vector_int &ninput_items,
+		       gr_vector_const_void_star &input_items,
+		       gr_vector_void_star &output_items);
     };
 
   } // namespace radar
 } // namespace gr
 
-#endif /* INCLUDED_RADAR_SPLIT_CC_H */
+#endif /* INCLUDED_RADAR_OS_CFAR_C_IMPL_H */
 

@@ -340,39 +340,74 @@
  * Public License instead of this License.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-#ifndef INCLUDED_RADAR_SPLIT_CC_H
-#define INCLUDED_RADAR_SPLIT_CC_H
-
-#include <radar/api.h>
-#include <gnuradio/tagged_stream_block.h>
+#include <gnuradio/io_signature.h>
+#include "os_cfar_c_impl.h"
 
 namespace gr {
   namespace radar {
 
-    /*!
-     * \brief <+description of block+>
-     * \ingroup radar
-     *
-     */
-    class RADAR_API split_cc : virtual public gr::tagged_stream_block
+    os_cfar_c::sptr
+    os_cfar_c::make(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& len_key, const std::string& msg_out)
     {
-     public:
-      typedef boost::shared_ptr<split_cc> sptr;
+      return gnuradio::get_initial_sptr
+        (new os_cfar_c_impl(samp_rate, samp_compare, samp_protect, rel_threshold, mult_threshold, len_key, msg_out));
+    }
 
-      /*!
-       * \brief Return a shared_ptr to a new instance of radar::split_cc.
-       *
-       * To avoid accidental use of raw pointers, radar::split_cc's
-       * constructor is in a private implementation
-       * class. radar::split_cc::make is the public interface for
-       * creating new instances.
-       */
-      static sptr make(uint16_t packet_num, const std::vector<uint16_t> packet_parts, const std::string& len_key="packet_len");
-    };
+    /*
+     * The private constructor
+     */
+    os_cfar_c_impl::os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& len_key, const std::string& msg_out)
+      : gr::tagged_stream_block("os_cfar_c",
+              gr::io_signature::make(1, 1, sizeof(gr_complex)),
+              gr::io_signature::make(1, 1, sizeof(gr_complex)), len_key)
+    {
+		d_samp_rate = samp_rate;
+		d_samp_compare = samp_compare;
+		d_samp_protect = samp_protect;
+		d_rel_threshold = rel_threshold;
+		d_mult_threshold = mult_threshold;
+		
+		// Register message port
+		port_id = pmt::mp(msg_out);
+		message_port_register_out(port_id);
+	}
 
-  } // namespace radar
-} // namespace gr
+    /*
+     * Our virtual destructor.
+     */
+    os_cfar_c_impl::~os_cfar_c_impl()
+    {
+    }
 
-#endif /* INCLUDED_RADAR_SPLIT_CC_H */
+    int
+    os_cfar_c_impl::calculate_output_stream_length(const gr_vector_int &ninput_items)
+    {
+      int noutput_items = 0;
+      return noutput_items ;
+    }
+
+    int
+    os_cfar_c_impl::work (int noutput_items,
+                       gr_vector_int &ninput_items,
+                       gr_vector_const_void_star &input_items,
+                       gr_vector_void_star &output_items)
+    {
+        const gr_complex *in = (const gr_complex *) input_items[0];
+
+        // Do <+signal processing+>
+        
+        for(int k=0; k<ninput_items[0]; k++){ // go through input
+			
+		}
+
+        // Tell runtime system how many output items we produced.
+        return noutput_items;
+    }
+
+  } /* namespace radar */
+} /* namespace gr */
 

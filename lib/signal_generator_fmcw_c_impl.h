@@ -354,14 +354,13 @@ namespace gr {
       // Nothing to declare in this block.
 
      public:
-      signal_generator_fmcw_c_impl(int samp_rate, int samp_up, int samp_down, int samp_cw, float freq_cw, float freq_sweep, float amplitude, const std::string& len_key, const std::string& info_key);
+      signal_generator_fmcw_c_impl(int samp_rate, int samp_up, int samp_down, int samp_cw, float freq_cw, float freq_sweep, float amplitude, const std::string& len_key);
       ~signal_generator_fmcw_c_impl();
       
       int d_samp_rate, d_samp_up, d_samp_down, d_samp_cw, d_packet_len;
       float d_freq_cw, d_freq_sweep, d_amplitude;
       
       pmt::pmt_t d_key_len, d_value_len, d_srcid;
-      pmt::pmt_t d_key_info, d_value_info;
       std::complex<float> d_phase;
       std::vector<float> d_waveform;
       int d_wv_counter;

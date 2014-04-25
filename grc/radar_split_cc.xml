@@ -1,18 +1,18 @@
 <block>
-  <name>Split</name>
+  <name>Split cc</name>
   <key>radar_split_cc</key>
   <category>RADAR</category>
   <import>import radar</import>
-  <make>radar.split_cc($packet_part, $info_key, $len_key)</make>
+  <make>radar.split_cc($packet_num, $packet_parts, $len_key)</make>
   <param>
-    <name>Packet part</name>
-    <key>packet_part</key>
-    <type>int</type>
+    <name>Packet number</name>
+    <key>packet_num</key>
+    <type>raw</type>
   </param>
   <param>
-    <name>Info tag key</name>
-    <key>info_key</key>
-    <type>string</type>
+    <name>Packet parts</name>
+    <key>packet_parts</key>
+    <type>raw</type>
   </param>
   <param>
     <name>Packet length key</name>

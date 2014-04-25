@@ -368,7 +368,7 @@ namespace gr {
        * class. radar::signal_generator_fmcw_c::make is the public interface for
        * creating new instances.
        */
-      static sptr make(int samp_rate, int samp_up, int samp_down, int samp_cw, float freq_cw, float freq_sweep, float amplitude, const std::string& len_key="packet_len", const std::string& info_key="fmcw_info");
+      static sptr make(int samp_rate, int samp_up, int samp_down, int samp_cw, float freq_cw, float freq_sweep, float amplitude, const std::string& len_key="packet_len");
     };
 
   } // namespace radar

@@ -12,6 +12,7 @@
 #include "radar/signal_generator_fmcw_c.h"
 #include "radar/doppler_rcs_simulator_cc.h"
 #include "radar/split_cc.h"
+#include "radar/os_cfar_c.h"
 %}
 
 
@@ -24,3 +25,5 @@ GR_SWIG_BLOCK_MAGIC2(radar, doppler_rcs_simulator_cc);
 
 %include "radar/split_cc.h"
 GR_SWIG_BLOCK_MAGIC2(radar, split_cc);
+%include "radar/os_cfar_c.h"
+GR_SWIG_BLOCK_MAGIC2(radar, os_cfar_c);

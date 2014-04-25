@@ -341,8 +341,8 @@
  */
 
 
-#ifndef INCLUDED_RADAR_SPLIT_CC_H
-#define INCLUDED_RADAR_SPLIT_CC_H
+#ifndef INCLUDED_RADAR_OS_CFAR_C_H
+#define INCLUDED_RADAR_OS_CFAR_C_H
 
 #include <radar/api.h>
 #include <gnuradio/tagged_stream_block.h>
@@ -355,24 +355,24 @@ namespace gr {
      * \ingroup radar
      *
      */
-    class RADAR_API split_cc : virtual public gr::tagged_stream_block
+    class RADAR_API os_cfar_c : virtual public gr::tagged_stream_block
     {
      public:
-      typedef boost::shared_ptr<split_cc> sptr;
+      typedef boost::shared_ptr<os_cfar_c> sptr;
 
       /*!
-       * \brief Return a shared_ptr to a new instance of radar::split_cc.
+       * \brief Return a shared_ptr to a new instance of radar::os_cfar_c.
        *
-       * To avoid accidental use of raw pointers, radar::split_cc's
+       * To avoid accidental use of raw pointers, radar::os_cfar_c's
        * constructor is in a private implementation
-       * class. radar::split_cc::make is the public interface for
+       * class. radar::os_cfar_c::make is the public interface for
        * creating new instances.
        */
-      static sptr make(uint16_t packet_num, const std::vector<uint16_t> packet_parts, const std::string& len_key="packet_len");
+      static sptr make(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& len_key="packet_len", const std::string& msg_out="cfar_out");
     };
 
   } // namespace radar
 } // namespace gr
 
-#endif /* INCLUDED_RADAR_SPLIT_CC_H */
+#endif /* INCLUDED_RADAR_OS_CFAR_C_H */
 

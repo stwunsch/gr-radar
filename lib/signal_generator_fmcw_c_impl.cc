@@ -351,16 +351,16 @@ namespace gr {
   namespace radar {
 
     signal_generator_fmcw_c::sptr
-    signal_generator_fmcw_c::make(int samp_rate, int samp_up, int samp_down, int samp_cw, float freq_cw, float freq_sweep, float amplitude, const std::string& len_key, const std::string& info_key)
+    signal_generator_fmcw_c::make(int samp_rate, int samp_up, int samp_down, int samp_cw, float freq_cw, float freq_sweep, float amplitude, const std::string& len_key)
     {
       return gnuradio::get_initial_sptr
-        (new signal_generator_fmcw_c_impl(samp_rate, samp_up, samp_down, samp_cw, freq_cw, freq_sweep, amplitude, len_key, info_key));
+        (new signal_generator_fmcw_c_impl(samp_rate, samp_up, samp_down, samp_cw, freq_cw, freq_sweep, amplitude, len_key));
     }
 
     /*
      * The private constructor
      */
-    signal_generator_fmcw_c_impl::signal_generator_fmcw_c_impl(int samp_rate, int samp_up, int samp_down, int samp_cw, float freq_cw, float freq_sweep, float amplitude, const std::string& len_key, const std::string& info_key)
+    signal_generator_fmcw_c_impl::signal_generator_fmcw_c_impl(int samp_rate, int samp_up, int samp_down, int samp_cw, float freq_cw, float freq_sweep, float amplitude, const std::string& len_key)
       : gr::sync_block("signal_generator_fmcw_c",
               gr::io_signature::make(0, 0, 0),
               gr::io_signature::make(1, 1, sizeof(gr_complex)))
@@ -377,12 +377,6 @@ namespace gr {
 		d_key_len = pmt::string_to_symbol(len_key); // set tag identifier for tagged stream
 		d_value_len = pmt::from_long(d_packet_len); // set length of 1 cw packet as tagged stream
 		d_srcid = pmt::string_to_symbol("sig_gen_fmcw"); // set block identifier
-		
-		d_key_info = pmt::string_to_symbol(info_key); // set tag identifier for fmcw info tag
-		std::vector<uint16_t> fmcw_info; // set-up vector for pmt
-		fmcw_info.resize(3);
-		fmcw_info[0] = samp_cw; fmcw_info[1] = samp_up; fmcw_info[2] = samp_down;
-		d_value_info = pmt::init_u16vector(fmcw_info.size(), fmcw_info); // set pmt for fmcw info (samples of up-chirp, down-chirp, cw)
 		
 		d_wv_counter = 0; // counts the samples written of a packet to reference in waveform vector
 		
@@ -416,7 +410,6 @@ namespace gr {
 			// Set tag on every packet_len-th item
 			if((nitems_written(0)+i)%d_packet_len==0){
 				add_item_tag(0, nitems_written(0)+i, d_key_len, d_value_len, d_srcid);
-				add_item_tag(0, nitems_written(0)+i, d_key_info, d_value_info, d_srcid);
 				d_wv_counter = 0;
 			}
 			
