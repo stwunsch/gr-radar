@@ -370,7 +370,7 @@ class qa_doppler_rcs_simulator_cc (gr_unittest.TestCase):
         
         src = radar.signal_generator_cw_c(packet_len,samp_rate,frequency,amplitude)
         head = blocks.head(8,test_len)
-        sim = radar.doppler_rcs_simulator_cc(Range, velocity, rcs, samp_rate, center_freq)
+        sim = radar.doppler_rcs_simulator_cc(Range, velocity, rcs, samp_rate, center_freq, amplitude)
         mult = blocks.multiply_cc()
         snk = blocks.vector_sink_c()
         

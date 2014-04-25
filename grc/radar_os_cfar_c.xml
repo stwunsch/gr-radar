@@ -3,7 +3,7 @@
   <key>radar_os_cfar_c</key>
   <category>RADAR</category>
   <import>import radar</import>
-  <make>radar.os_cfar_c($samp_rate, $samp_compare, $samp_protect, $rel_threshold, $mult_threshold, $len_key)</make>
+  <make>radar.os_cfar_c($samp_rate, $samp_compare, $samp_protect, $rel_threshold, $mult_threshold, $block_consecutive, $len_key)</make>
   <param>
     <name>Sample rate</name>
     <key>samp_rate</key>
@@ -28,6 +28,20 @@
     <name>Multiplier threshold</name>
     <key>mult_threshold</key>
     <type>float</type>
+  </param>
+   <param>
+    <name>Block consecutive peaks</name>
+    <key>block_consecutive</key>
+    <value>True</value>
+    <type>bool</type>
+      <option>
+		<name>True</name>
+		<key>True</key>
+	  </option>
+	  <option>
+		<name>False</name>
+		<key>False</key>
+	  </option>
   </param>
   <param>
     <name>Packet length key</name>

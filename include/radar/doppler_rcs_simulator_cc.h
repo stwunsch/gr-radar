@@ -368,7 +368,7 @@ namespace gr {
        * class. radar::doppler_rcs_simulator_cc::make is the public interface for
        * creating new instances.
        */
-      static sptr make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, int samp_rate, float center_freq);
+      static sptr make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, int samp_rate, float center_freq, float amplitude);
     };
 
   } // namespace radar

@@ -352,16 +352,16 @@ namespace gr {
   namespace radar {
 
     doppler_rcs_simulator_cc::sptr
-    doppler_rcs_simulator_cc::make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, int samp_rate, float center_freq)
+    doppler_rcs_simulator_cc::make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, int samp_rate, float center_freq, float amplitude)
     {
       return gnuradio::get_initial_sptr
-        (new doppler_rcs_simulator_cc_impl(range, velocity, rcs, samp_rate, center_freq));
+        (new doppler_rcs_simulator_cc_impl(range, velocity, rcs, samp_rate, center_freq, amplitude));
     }
 
     /*
      * The private constructor
      */
-    doppler_rcs_simulator_cc_impl::doppler_rcs_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, int samp_rate, float center_freq)
+    doppler_rcs_simulator_cc_impl::doppler_rcs_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, int samp_rate, float center_freq, float amplitude)
       : gr::sync_block("doppler_rcs_simulator_cc",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(1, 1, sizeof(gr_complex)))
@@ -370,7 +370,7 @@ namespace gr {
 		d_velocity = velocity; // same as range vector, needed for doppler estimation
 		d_rcs = rcs; // same as range vector, needed for rcs estimation
 		d_samp_rate = samp_rate;
-		d_center_freq = center_freq; // center frequency of simulated hardware (e.g. USRP) for doppler estimation
+		d_center_freq = center_freq; // center frequency of simulated hardware for doppler estimation
 		
 		// Get number of targets
 		d_num_targets = d_velocity.size();
@@ -383,10 +383,10 @@ namespace gr {
         d_freq_shift.resize(d_num_targets);
         for(int k=0; k<d_num_targets; k++) d_freq_shift[k] = 2*d_velocity[k]*d_center_freq/c_light;
         
-        // Get signal amplitudes of reflections with free space path loss and rcs
+        // Get signal amplitudes of reflections with free space path loss and rcs (radar equation)
         d_scale_ampl.resize(d_num_targets);
         for(int k=0; k<d_num_targets; k++){
-			d_scale_ampl[k] = 1/(float)d_num_targets; // FIXME: need scale based on free-space-path-loss
+			d_scale_ampl[k] = amplitude*c_light/center_freq*std::sqrt(d_rcs[k])/std::pow(d_range[k],2)/std::pow(4*M_PI,3.0/2.0); // sqrt of radar equation as amplitude estimation
 		}
 	}
 

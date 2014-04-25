@@ -3,7 +3,7 @@
   <key>radar_doppler_rcs_simulator_cc</key>
   <category>RADAR</category>
   <import>import radar</import>
-  <make>radar.doppler_rcs_simulator_cc($range, $velocity, $rcs, $samp_rate, $center_freq)</make>
+  <make>radar.doppler_rcs_simulator_cc($range, $velocity, $rcs, $samp_rate, $center_freq, $amplitude)</make>
   <param>
     <name>Range</name>
     <key>range</key>
@@ -27,6 +27,11 @@
   <param>
     <name>Center frequency</name>
     <key>center_freq</key>
+    <type>float</type>
+  </param>
+  <param>
+    <name>Incoming signal amplitude</name>
+    <key>amplitude</key>
     <type>float</type>
   </param>
   <sink>

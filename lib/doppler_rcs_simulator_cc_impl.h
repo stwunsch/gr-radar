@@ -354,7 +354,7 @@ namespace gr {
       // Nothing to declare in this block.
 
      public:
-      doppler_rcs_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, int samp_rate, float center_freq);
+      doppler_rcs_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, int samp_rate, float center_freq, float amplitude);
       ~doppler_rcs_simulator_cc_impl();
       
       std::vector<float> d_range, d_velocity, d_rcs;
