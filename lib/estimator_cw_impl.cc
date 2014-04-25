@@ -352,16 +352,16 @@ namespace gr {
   namespace radar {
 
     estimator_cw::sptr
-    estimator_cw::make(float center_freq, const std::string& msg_in)
+    estimator_cw::make(float center_freq)
     {
       return gnuradio::get_initial_sptr
-        (new estimator_cw_impl(center_freq, msg_in));
+        (new estimator_cw_impl(center_freq));
     }
 
     /*
      * The private constructor
      */
-    estimator_cw_impl::estimator_cw_impl(float center_freq, const std::string& msg_in)
+    estimator_cw_impl::estimator_cw_impl(float center_freq)
       : gr::block("estimator_cw",
               gr::io_signature::make(0,0,0),
               gr::io_signature::make(0,0,0))
@@ -369,7 +369,7 @@ namespace gr {
 		d_center_freq = center_freq;
 		
 		// Register input message port
-		d_port_id_in = pmt::mp(msg_in);
+		d_port_id_in = pmt::mp("Msg in");
 		message_port_register_in(d_port_id_in);
 		set_msg_handler(d_port_id_in, boost::bind(&estimator_cw_impl::handle_msg, this, _1));
 	}

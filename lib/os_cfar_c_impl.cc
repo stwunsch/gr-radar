@@ -351,16 +351,16 @@ namespace gr {
   namespace radar {
 
     os_cfar_c::sptr
-    os_cfar_c::make(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& msg_out, const std::string& len_key)
+    os_cfar_c::make(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& len_key)
     {
       return gnuradio::get_initial_sptr
-        (new os_cfar_c_impl(samp_rate, samp_compare, samp_protect, rel_threshold, mult_threshold, msg_out, len_key));
+        (new os_cfar_c_impl(samp_rate, samp_compare, samp_protect, rel_threshold, mult_threshold, len_key));
     }
 
     /*
      * The private constructor
      */
-    os_cfar_c_impl::os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& msg_out, const std::string& len_key)
+    os_cfar_c_impl::os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& len_key)
       : gr::tagged_stream_block("os_cfar_c",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(0, 0, 0), len_key)
@@ -372,7 +372,7 @@ namespace gr {
 		d_mult_threshold = mult_threshold;
 		
 		// Register message port
-		d_port_id = pmt::mp(msg_out);
+		d_port_id = pmt::mp("Msg out");
 		message_port_register_out(d_port_id);
 	}
 
@@ -411,17 +411,17 @@ namespace gr {
 					d_hold_samp.push_back(0);
 				}
 				else{ // push back abs-square
-					d_hold_samp.push_back(pow(abs(in[k-l-d_samp_protect]),2));
+					d_hold_samp.push_back(std::pow(std::abs(in[k-l-d_samp_protect]),2));
 				}
 				if(k+l+d_samp_protect>=ninput_items[0]){ // push-back zeros for overflows
 					d_hold_samp.push_back(0);
 				}
 				else{ // push back abs-square
-					d_hold_samp.push_back(pow(abs(in[k+l+d_samp_protect]),2));
+					d_hold_samp.push_back(std::pow(std::abs(in[k+l+d_samp_protect]),2));
 				}
 			}
 			std::sort(d_hold_samp.begin(),d_hold_samp.end()); // sort sample vector
-			if(pow(abs(in[k]),2)>d_hold_samp[(int)((2*d_samp_compare-1)*d_rel_threshold)]*d_mult_threshold){ // check if in[k] is over dynamic threshold multiplied with mult_threshold
+			if(std::pow(std::abs(in[k]),2)>d_hold_samp[(int)((2*d_samp_compare-1)*d_rel_threshold)]*d_mult_threshold){ // check if in[k] is over dynamic threshold multiplied with mult_threshold
 				if(k<=ninput_items[0]/2) d_freq.push_back(k*d_samp_rate/(float)ninput_items[0]); // add frequency to message vector d_freq
 				else d_freq.push_back(-(float)d_samp_rate+k*d_samp_rate/(float)ninput_items[0]);
 				d_pks.push_back(pow(abs(in[k]),2)); // add abs-square to message vector d_pks

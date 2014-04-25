@@ -354,7 +354,7 @@ namespace gr {
       // Nothing to declare in this block.
 
      public:
-      estimator_cw_impl(float center_freq, const std::string& msg_in);
+      estimator_cw_impl(float center_freq);
       ~estimator_cw_impl();
       void handle_msg(pmt::pmt_t msg);
       

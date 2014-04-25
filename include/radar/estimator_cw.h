@@ -368,7 +368,7 @@ namespace gr {
        * class. radar::estimator_cw::make is the public interface for
        * creating new instances.
        */
-      static sptr make(float center_freq, const std::string& msg_in);
+      static sptr make(float center_freq);
     };
 
   } // namespace radar

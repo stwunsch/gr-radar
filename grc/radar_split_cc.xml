@@ -1,5 +1,5 @@
 <block>
-  <name>Split cc</name>
+  <name>Split</name>
   <key>radar_split_cc</key>
   <category>RADAR</category>
   <import>import radar</import>

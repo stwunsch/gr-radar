@@ -357,7 +357,7 @@ namespace gr {
       int calculate_output_stream_length(const gr_vector_int &ninput_items);
 
      public:
-      os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& msg_out, const std::string& len_key);
+      os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& len_key);
       ~os_cfar_c_impl();
       
       int d_samp_compare, d_samp_protect, d_samp_rate;

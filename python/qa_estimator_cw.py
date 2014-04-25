@@ -343,7 +343,6 @@
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
 import radar_swig as radar
-from matplotlib import pyplot as plt
 from time import sleep
 
 class qa_estimator_cw (gr_unittest.TestCase):
@@ -365,30 +364,23 @@ class qa_estimator_cw (gr_unittest.TestCase):
 
 		src = radar.signal_generator_cw_c(packet_len,samp_rate,0,1)
 		head = blocks.head(8,test_len)
-		sim = radar.doppler_rcs_simulator_cc((10,10),(15,30),(1e9,1e9),samp_rate,center_freq)
+		sim = radar.doppler_rcs_simulator_cc((10,10,10),(15,17,30),(1e9,1e9,1e9),samp_rate,center_freq)
 		mult = blocks.multiply_cc()
 		fft = radar.ts_fft_cc()
-		cfar = radar.os_cfar_c(samp_rate, 5, 0, 0.78, 5, 'cfar_out')
-		est = radar.estimator_cw(center_freq, 'est_in')
-		snk = blocks.vector_sink_c()
+		cfar = radar.os_cfar_c(samp_rate, 5, 0, 0.78, 5)
+		est = radar.estimator_cw(center_freq)
 
 		self.tb.connect(src,head,(mult,1))
 		self.tb.connect(head,sim,(mult,0))
 		self.tb.connect(mult,fft,cfar)
-		self.tb.msg_connect(cfar,'cfar_out',est,'est_in')
-		self.tb.connect(fft,snk)
+		self.tb.msg_connect(cfar,'Msg out',est,'Msg in')
 
 		self.tb.start()
 		sleep(0.5)
 		self.tb.stop()
 		self.tb.wait()
+		
 		# check data
-		data_fft = snk.data()
-		data = [0]*test_len
-		for k in range(test_len):
-			data[k] = abs(data_fft[k]);
-		plt.plot(data)
-		plt.show()
 
 
 if __name__ == '__main__':

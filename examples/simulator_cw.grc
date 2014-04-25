@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Fri Apr 25 15:46:30 2014</timestamp>
+  <timestamp>Fri Apr 25 20:48:14 2014</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -64,7 +64,7 @@
     <key>variable</key>
     <param>
       <key>id</key>
-      <value>samp_rate</value>
+      <value>decimator_fac</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -72,11 +72,11 @@
     </param>
     <param>
       <key>value</key>
-      <value>4000</value>
+      <value>4</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(188, 10)</value>
+      <value>(504, 13)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -133,7 +133,7 @@
     <key>variable</key>
     <param>
       <key>id</key>
-      <value>decimator_fac</value>
+      <value>samp_rate</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -141,109 +141,11 @@
     </param>
     <param>
       <key>value</key>
-      <value>4</value>
+      <value>32000</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(504, 13)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>radar_doppler_rcs_simulator_cc</key>
-    <param>
-      <key>id</key>
-      <value>radar_doppler_rcs_simulator_cc_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>range</key>
-      <value>(10)</value>
-    </param>
-    <param>
-      <key>velocity</key>
-      <value>(15)</value>
-    </param>
-    <param>
-      <key>rcs</key>
-      <value>(1e9)</value>
-    </param>
-    <param>
-      <key>samp_rate</key>
-      <value>samp_rate</value>
-    </param>
-    <param>
-      <key>center_freq</key>
-      <value>center_freq</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(320, 213)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_throttle</key>
-    <param>
-      <key>id</key>
-      <value>blocks_throttle_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
-    </param>
-    <param>
-      <key>samples_per_second</key>
-      <value>samp_rate</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>ignoretag</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(82, 355)</value>
+      <value>(188, 10)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -326,57 +228,6 @@
     <param>
       <key>_rotation</key>
       <value>180</value>
-    </param>
-  </block>
-  <block>
-    <key>radar_signal_generator_cw_c</key>
-    <param>
-      <key>id</key>
-      <value>radar_signal_generator_cw_c_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>packet_len</key>
-      <value>packet_len</value>
-    </param>
-    <param>
-      <key>samp_rate</key>
-      <value>samp_rate</value>
-    </param>
-    <param>
-      <key>frequency</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>amplitude</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>len_key</key>
-      <value>"packet_len"</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(25, 192)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
     </param>
   </block>
   <block>
@@ -518,30 +369,34 @@
     </param>
   </block>
   <block>
-    <key>analog_noise_source_x</key>
+    <key>radar_doppler_rcs_simulator_cc</key>
     <param>
       <key>id</key>
-      <value>analog_noise_source_x_0</value>
+      <value>radar_doppler_rcs_simulator_cc_0</value>
     </param>
     <param>
       <key>_enabled</key>
       <value>True</value>
     </param>
     <param>
-      <key>type</key>
-      <value>complex</value>
+      <key>range</key>
+      <value>(10, 10)</value>
     </param>
     <param>
-      <key>noise_type</key>
-      <value>analog.GR_GAUSSIAN</value>
+      <key>velocity</key>
+      <value>(15, 30)</value>
     </param>
     <param>
-      <key>amp</key>
-      <value>0.1</value>
+      <key>rcs</key>
+      <value>(1e9, 1e9)</value>
     </param>
     <param>
-      <key>seed</key>
-      <value>0</value>
+      <key>samp_rate</key>
+      <value>samp_rate</value>
+    </param>
+    <param>
+      <key>center_freq</key>
+      <value>center_freq</value>
     </param>
     <param>
       <key>affinity</key>
@@ -557,7 +412,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(321, 125)</value>
+      <value>(320, 213)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -579,10 +434,6 @@
       <value>center_freq</value>
     </param>
     <param>
-      <key>msg_in</key>
-      <value>"cfar_out"</value>
-    </param>
-    <param>
       <key>affinity</key>
       <value></value>
     </param>
@@ -593,6 +444,104 @@
     <param>
       <key>_rotation</key>
       <value>180</value>
+    </param>
+  </block>
+  <block>
+    <key>radar_signal_generator_cw_c</key>
+    <param>
+      <key>id</key>
+      <value>radar_signal_generator_cw_c_0</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>packet_len</key>
+      <value>packet_len</value>
+    </param>
+    <param>
+      <key>samp_rate</key>
+      <value>samp_rate</value>
+    </param>
+    <param>
+      <key>frequency</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>amplitude</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>len_key</key>
+      <value>"packet_len"</value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(25, 192)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_throttle</key>
+    <param>
+      <key>id</key>
+      <value>blocks_throttle_0</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>complex</value>
+    </param>
+    <param>
+      <key>samples_per_second</key>
+      <value>samp_rate</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>ignoretag</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(82, 355)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
     </param>
   </block>
   <block>
@@ -611,7 +560,7 @@
     </param>
     <param>
       <key>samp_compare</key>
-      <value>20</value>
+      <value>15</value>
     </param>
     <param>
       <key>samp_protect</key>
@@ -623,11 +572,7 @@
     </param>
     <param>
       <key>mult_threshold</key>
-      <value>20</value>
-    </param>
-    <param>
-      <key>msg_out</key>
-      <value>"cfar_out"</value>
+      <value>10</value>
     </param>
     <param>
       <key>len_key</key>
@@ -654,33 +599,56 @@
       <value>180</value>
     </param>
   </block>
-  <connection>
-    <source_block_id>analog_noise_source_x_0</source_block_id>
-    <sink_block_id>blocks_add_xx_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
+  <block>
+    <key>analog_noise_source_x</key>
+    <param>
+      <key>id</key>
+      <value>analog_noise_source_x_0</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>complex</value>
+    </param>
+    <param>
+      <key>noise_type</key>
+      <value>analog.GR_GAUSSIAN</value>
+    </param>
+    <param>
+      <key>amp</key>
+      <value>0.5</value>
+    </param>
+    <param>
+      <key>seed</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(321, 125)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
   <connection>
     <source_block_id>radar_doppler_rcs_simulator_cc_0</source_block_id>
     <sink_block_id>blocks_add_xx_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>1</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>radar_signal_generator_cw_c_0</source_block_id>
-    <sink_block_id>blocks_throttle_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_throttle_0</source_block_id>
-    <sink_block_id>radar_doppler_rcs_simulator_cc_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_throttle_0</source_block_id>
-    <sink_block_id>blocks_multiply_xx_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>1</sink_key>
   </connection>
@@ -711,7 +679,31 @@
   <connection>
     <source_block_id>radar_os_cfar_c_0</source_block_id>
     <sink_block_id>radar_estimator_cw_0</sink_block_id>
-    <source_key>$msg_out</source_key>
-    <sink_key>$msg_in</sink_key>
+    <source_key>Msg out</source_key>
+    <sink_key>Msg in</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_throttle_0</source_block_id>
+    <sink_block_id>blocks_multiply_xx_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>1</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_throttle_0</source_block_id>
+    <sink_block_id>radar_doppler_rcs_simulator_cc_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>radar_signal_generator_cw_c_0</source_block_id>
+    <sink_block_id>blocks_throttle_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>analog_noise_source_x_0</source_block_id>
+    <sink_block_id>blocks_add_xx_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
   </connection>
 </flow_graph>

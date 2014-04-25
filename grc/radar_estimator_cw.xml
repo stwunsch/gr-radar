@@ -3,19 +3,14 @@
   <key>radar_estimator_cw</key>
   <category>RADAR</category>
   <import>import radar</import>
-  <make>radar.estimator_cw($center_freq, $msg_in)</make>
+  <make>radar.estimator_cw($center_freq)</make>
   <param>
     <name>Center frequency</name>
     <key>center_freq</key>
     <type>float</type>
   </param>
-  <param>
-    <name>Message port ID (in)</name>
-    <key>msg_in</key>
-    <type>string</type>
-  </param>
   <sink>
-    <name>$msg_in</name>
+    <name>Msg in</name>
     <type>message</type>
     <optional>1</optional>
   </sink>
