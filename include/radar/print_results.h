@@ -340,39 +340,39 @@
  * Public License instead of this License.
  */
 
-#ifndef INCLUDED_RADAR_ESTIMATOR_CW_IMPL_H
-#define INCLUDED_RADAR_ESTIMATOR_CW_IMPL_H
 
-#include <radar/estimator_cw.h>
+#ifndef INCLUDED_RADAR_PRINT_RESULTS_H
+#define INCLUDED_RADAR_PRINT_RESULTS_H
+
+#include <radar/api.h>
+#include <gnuradio/sync_block.h>
 
 namespace gr {
   namespace radar {
 
-    class estimator_cw_impl : public estimator_cw
+    /*!
+     * \brief <+description of block+>
+     * \ingroup radar
+     *
+     */
+    class RADAR_API print_results : virtual public gr::block
     {
-     private:
-      // Nothing to declare in this block.
-
      public:
-      estimator_cw_impl(float center_freq);
-      ~estimator_cw_impl();
-      void handle_msg(pmt::pmt_t msg);
-      
-      float d_center_freq;
-      pmt::pmt_t d_port_id_in, d_port_id_out;
-      
-      int d_timestamp;
-      std::vector<float> d_freq, d_pks;
-	  pmt::pmt_t d_ptimestamp, d_pfreq, d_ppks;
-	  
-	  std::vector<float> d_vel;
-	  pmt::pmt_t d_vel_key, d_vel_value, d_value;
-      
-      const static float c_light = 3e8;
+      typedef boost::shared_ptr<print_results> sptr;
+
+      /*!
+       * \brief Return a shared_ptr to a new instance of radar::print_results.
+       *
+       * To avoid accidental use of raw pointers, radar::print_results's
+       * constructor is in a private implementation
+       * class. radar::print_results::make is the public interface for
+       * creating new instances.
+       */
+      static sptr make();
     };
 
   } // namespace radar
 } // namespace gr
 
-#endif /* INCLUDED_RADAR_ESTIMATOR_CW_IMPL_H */
+#endif /* INCLUDED_RADAR_PRINT_RESULTS_H */
 

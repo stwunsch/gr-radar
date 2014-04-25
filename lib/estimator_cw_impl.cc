@@ -346,7 +346,6 @@
 
 #include <gnuradio/io_signature.h>
 #include "estimator_cw_impl.h"
-#include <iostream>
 
 namespace gr {
   namespace radar {
@@ -372,6 +371,10 @@ namespace gr {
 		d_port_id_in = pmt::mp("Msg in");
 		message_port_register_in(d_port_id_in);
 		set_msg_handler(d_port_id_in, boost::bind(&estimator_cw_impl::handle_msg, this, _1));
+		
+		// Register output message port
+		d_port_id_out = pmt::mp("Msg out");
+		message_port_register_out(d_port_id_out);
 	}
 
     /*
@@ -384,6 +387,7 @@ namespace gr {
     void
     estimator_cw_impl::handle_msg(pmt::pmt_t msg)
     {
+		// Read msg from peak detector
 		d_ptimestamp = pmt::nth(0,msg);
 		d_pfreq = pmt::nth(1,msg);
 		d_ppks = pmt::nth(2,msg);
@@ -392,10 +396,18 @@ namespace gr {
 		d_freq = pmt::f32vector_elements(d_pfreq);
 		d_pks = pmt::f32vector_elements(d_ppks);
 		
+		// Calc velocities and write to vector
+		d_vel.clear();
 		for(int k=0; k<d_freq.size(); k++){
-			std::cout << d_freq[k]*c_light/2/d_center_freq << std::endl;
+			d_vel.push_back(d_freq[k]*c_light/2/d_center_freq); // calc with doppler formula
 		}
-		std::cout << std::endl;
+		
+		// Push pmt to output msg port
+		d_vel_key = pmt::string_to_symbol("velocity"); // identifier velocity
+		d_vel_value = pmt::init_f32vector(d_vel.size(), d_vel); // vector to pmt
+		d_value = pmt::list2(d_vel_key, d_vel_value); // make list for velocity information
+		d_value = pmt::list1(d_value); // all information to one pmt list (only velocity -> only 1 item list)
+		message_port_pub(d_port_id_out,d_value);
 	}
 
   } /* namespace radar */

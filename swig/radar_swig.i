@@ -15,6 +15,7 @@
 #include "radar/os_cfar_c.h"
 #include "radar/ts_fft_cc.h"
 #include "radar/estimator_cw.h"
+#include "radar/print_results.h"
 %}
 
 
@@ -33,3 +34,5 @@ GR_SWIG_BLOCK_MAGIC2(radar, os_cfar_c);
 GR_SWIG_BLOCK_MAGIC2(radar, ts_fft_cc);
 %include "radar/estimator_cw.h"
 GR_SWIG_BLOCK_MAGIC2(radar, estimator_cw);
+%include "radar/print_results.h"
+GR_SWIG_BLOCK_MAGIC2(radar, print_results);

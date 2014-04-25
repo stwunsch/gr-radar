@@ -367,16 +367,18 @@ class qa_estimator_cw (gr_unittest.TestCase):
 		sim = radar.doppler_rcs_simulator_cc((10,10,10),(15,17,30),(1e9,1e9,1e9),samp_rate,center_freq)
 		mult = blocks.multiply_cc()
 		fft = radar.ts_fft_cc()
-		cfar = radar.os_cfar_c(samp_rate, 5, 0, 0.78, 5)
+		cfar = radar.os_cfar_c(samp_rate, 5, 0, 0.78, 10)
 		est = radar.estimator_cw(center_freq)
+		res = radar.print_results()
 
 		self.tb.connect(src,head,(mult,1))
 		self.tb.connect(head,sim,(mult,0))
 		self.tb.connect(mult,fft,cfar)
 		self.tb.msg_connect(cfar,'Msg out',est,'Msg in')
+		self.tb.msg_connect(est,'Msg out',res,'Msg in')
 
 		self.tb.start()
-		sleep(0.5)
+		sleep(0.2)
 		self.tb.stop()
 		self.tb.wait()
 		

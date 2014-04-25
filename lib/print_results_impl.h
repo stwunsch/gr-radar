@@ -1,4 +1,5 @@
 /* -*- c++ -*- */
+/* -*- c++ -*- */
 /* GNU GENERAL PUBLIC LICENSE
  *                        Version 2, June 1991
  * 
@@ -340,39 +341,31 @@
  * Public License instead of this License.
  */
 
-#ifndef INCLUDED_RADAR_ESTIMATOR_CW_IMPL_H
-#define INCLUDED_RADAR_ESTIMATOR_CW_IMPL_H
+#ifndef INCLUDED_RADAR_PRINT_RESULTS_IMPL_H
+#define INCLUDED_RADAR_PRINT_RESULTS_IMPL_H
 
-#include <radar/estimator_cw.h>
+#include <radar/print_results.h>
 
 namespace gr {
   namespace radar {
 
-    class estimator_cw_impl : public estimator_cw
+    class print_results_impl : public print_results
     {
      private:
       // Nothing to declare in this block.
 
      public:
-      estimator_cw_impl(float center_freq);
-      ~estimator_cw_impl();
+      print_results_impl();
+      ~print_results_impl();
       void handle_msg(pmt::pmt_t msg);
       
-      float d_center_freq;
-      pmt::pmt_t d_port_id_in, d_port_id_out;
-      
-      int d_timestamp;
-      std::vector<float> d_freq, d_pks;
-	  pmt::pmt_t d_ptimestamp, d_pfreq, d_ppks;
-	  
-	  std::vector<float> d_vel;
-	  pmt::pmt_t d_vel_key, d_vel_value, d_value;
-      
-      const static float c_light = 3e8;
+      pmt::pmt_t d_port_id_in;
+      size_t d_size_msg, d_size_part;
+      pmt::pmt_t d_msg_part;
     };
 
   } // namespace radar
 } // namespace gr
 
-#endif /* INCLUDED_RADAR_ESTIMATOR_CW_IMPL_H */
+#endif /* INCLUDED_RADAR_PRINT_RESULTS_IMPL_H */
 

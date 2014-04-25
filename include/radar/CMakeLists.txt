@@ -28,5 +28,6 @@ install(FILES
     split_cc.h
     os_cfar_c.h
     ts_fft_cc.h
-    estimator_cw.h DESTINATION include/radar
+    estimator_cw.h
+    print_results.h DESTINATION include/radar
 )

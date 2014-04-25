@@ -14,4 +14,9 @@
     <type>message</type>
     <optional>1</optional>
   </sink>
+  <source>
+    <name>Msg out</name>
+    <type>message</type>
+    <optional>1</optional>
+  </source>
 </block>
