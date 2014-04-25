@@ -27,5 +27,6 @@ install(FILES
     doppler_rcs_simulator_cc.h
     split_cc.h
     os_cfar_c.h
-    ts_fft_cc.h DESTINATION include/radar
+    ts_fft_cc.h
+    estimator_cw.h DESTINATION include/radar
 )

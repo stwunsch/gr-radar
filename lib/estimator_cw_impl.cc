@@ -340,43 +340,64 @@
  * Public License instead of this License.
  */
 
-#ifndef INCLUDED_RADAR_OS_CFAR_C_IMPL_H
-#define INCLUDED_RADAR_OS_CFAR_C_IMPL_H
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-#include <radar/os_cfar_c.h>
+#include <gnuradio/io_signature.h>
+#include "estimator_cw_impl.h"
+#include <iostream>
 
 namespace gr {
   namespace radar {
 
-    class os_cfar_c_impl : public os_cfar_c
+    estimator_cw::sptr
+    estimator_cw::make(float center_freq, const std::string& msg_in)
     {
-     private:
-      // Nothing to declare in this block.
+      return gnuradio::get_initial_sptr
+        (new estimator_cw_impl(center_freq, msg_in));
+    }
 
-     protected:
-      int calculate_output_stream_length(const gr_vector_int &ninput_items);
+    /*
+     * The private constructor
+     */
+    estimator_cw_impl::estimator_cw_impl(float center_freq, const std::string& msg_in)
+      : gr::block("estimator_cw",
+              gr::io_signature::make(0,0,0),
+              gr::io_signature::make(0,0,0))
+    {
+		d_center_freq = center_freq;
+		
+		// Register input message port
+		d_port_id_in = pmt::mp(msg_in);
+		message_port_register_in(d_port_id_in);
+		set_msg_handler(d_port_id_in, boost::bind(&estimator_cw_impl::handle_msg, this, _1));
+	}
 
-     public:
-      os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& msg_out, const std::string& len_key);
-      ~os_cfar_c_impl();
-      
-      int d_samp_compare, d_samp_protect, d_samp_rate;
-      float d_rel_threshold, d_mult_threshold;
-      
-      std::vector<float> d_pks, d_freq, d_hold_samp;
-      
-      pmt::pmt_t d_port_id;
-      pmt::pmt_t d_ptimestamp,d_pfreq,d_ppks,d_value;
+    /*
+     * Our virtual destructor.
+     */
+    estimator_cw_impl::~estimator_cw_impl()
+    {
+    }
 
-      // Where all the action really happens
-      int work(int noutput_items,
-		       gr_vector_int &ninput_items,
-		       gr_vector_const_void_star &input_items,
-		       gr_vector_void_star &output_items);
-    };
+    void
+    estimator_cw_impl::handle_msg(pmt::pmt_t msg)
+    {
+		d_ptimestamp = pmt::nth(0,msg);
+		d_pfreq = pmt::nth(1,msg);
+		d_ppks = pmt::nth(2,msg);
+		
+		d_timestamp = pmt::to_long(d_ptimestamp);
+		d_freq = pmt::f32vector_elements(d_pfreq);
+		d_pks = pmt::f32vector_elements(d_ppks);
+		
+		for(int k=0; k<d_freq.size(); k++){
+			std::cout << d_freq[k]*c_light/2/d_center_freq << std::endl;
+		}
+		std::cout << std::endl;
+	}
 
-  } // namespace radar
-} // namespace gr
-
-#endif /* INCLUDED_RADAR_OS_CFAR_C_IMPL_H */
+  } /* namespace radar */
+} /* namespace gr */
 

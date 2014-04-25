@@ -340,43 +340,39 @@
  * Public License instead of this License.
  */
 
-#ifndef INCLUDED_RADAR_OS_CFAR_C_IMPL_H
-#define INCLUDED_RADAR_OS_CFAR_C_IMPL_H
 
-#include <radar/os_cfar_c.h>
+#ifndef INCLUDED_RADAR_ESTIMATOR_CW_H
+#define INCLUDED_RADAR_ESTIMATOR_CW_H
+
+#include <radar/api.h>
+#include <gnuradio/sync_block.h>
 
 namespace gr {
   namespace radar {
 
-    class os_cfar_c_impl : public os_cfar_c
+    /*!
+     * \brief <+description of block+>
+     * \ingroup radar
+     *
+     */
+    class RADAR_API estimator_cw : virtual public gr::block
     {
-     private:
-      // Nothing to declare in this block.
-
-     protected:
-      int calculate_output_stream_length(const gr_vector_int &ninput_items);
-
      public:
-      os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& msg_out, const std::string& len_key);
-      ~os_cfar_c_impl();
-      
-      int d_samp_compare, d_samp_protect, d_samp_rate;
-      float d_rel_threshold, d_mult_threshold;
-      
-      std::vector<float> d_pks, d_freq, d_hold_samp;
-      
-      pmt::pmt_t d_port_id;
-      pmt::pmt_t d_ptimestamp,d_pfreq,d_ppks,d_value;
+      typedef boost::shared_ptr<estimator_cw> sptr;
 
-      // Where all the action really happens
-      int work(int noutput_items,
-		       gr_vector_int &ninput_items,
-		       gr_vector_const_void_star &input_items,
-		       gr_vector_void_star &output_items);
+      /*!
+       * \brief Return a shared_ptr to a new instance of radar::estimator_cw.
+       *
+       * To avoid accidental use of raw pointers, radar::estimator_cw's
+       * constructor is in a private implementation
+       * class. radar::estimator_cw::make is the public interface for
+       * creating new instances.
+       */
+      static sptr make(float center_freq, const std::string& msg_in);
     };
 
   } // namespace radar
 } // namespace gr
 
-#endif /* INCLUDED_RADAR_OS_CFAR_C_IMPL_H */
+#endif /* INCLUDED_RADAR_ESTIMATOR_CW_H */
 

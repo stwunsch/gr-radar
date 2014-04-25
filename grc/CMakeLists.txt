@@ -22,5 +22,6 @@ install(FILES
     radar_doppler_rcs_simulator_cc.xml
     radar_split_cc.xml
     radar_os_cfar_c.xml
-    radar_ts_fft_cc.xml DESTINATION share/gnuradio/grc/blocks
+    radar_ts_fft_cc.xml
+    radar_estimator_cw.xml DESTINATION share/gnuradio/grc/blocks
 )

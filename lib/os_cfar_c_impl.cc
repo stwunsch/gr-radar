@@ -351,16 +351,16 @@ namespace gr {
   namespace radar {
 
     os_cfar_c::sptr
-    os_cfar_c::make(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& len_key, const std::string& msg_out)
+    os_cfar_c::make(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& msg_out, const std::string& len_key)
     {
       return gnuradio::get_initial_sptr
-        (new os_cfar_c_impl(samp_rate, samp_compare, samp_protect, rel_threshold, mult_threshold, len_key, msg_out));
+        (new os_cfar_c_impl(samp_rate, samp_compare, samp_protect, rel_threshold, mult_threshold, msg_out, len_key));
     }
 
     /*
      * The private constructor
      */
-    os_cfar_c_impl::os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& len_key, const std::string& msg_out)
+    os_cfar_c_impl::os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& msg_out, const std::string& len_key)
       : gr::tagged_stream_block("os_cfar_c",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(0, 0, 0), len_key)

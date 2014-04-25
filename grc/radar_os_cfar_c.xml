@@ -3,7 +3,7 @@
   <key>radar_os_cfar_c</key>
   <category>RADAR</category>
   <import>import radar</import>
-  <make>radar.os_cfar_c($samp_rate, $samp_compare, $samp_protect, $rel_threshold, $mult_threshold, $len_key, $msg_out)</make>
+  <make>radar.os_cfar_c($samp_rate, $samp_compare, $samp_protect, $rel_threshold, $mult_threshold, $msg_out, $len_key)</make>
   <param>
     <name>Sample rate</name>
     <key>samp_rate</key>
@@ -29,16 +29,15 @@
     <key>mult_threshold</key>
     <type>float</type>
   </param>
+    <param>
+    <name>Message port ID (out)</name>
+    <key>msg_out</key>
+    <type>string</type>
+  </param>
   <param>
     <name>Packet length key</name>
     <key>len_key</key>
     <value>"packet_len"</value>
-    <type>string</type>
-  </param>
-  <param>
-    <name>Message port key</name>
-    <key>msg_out</key>
-    <value>"cfar_out"</value>
     <type>string</type>
   </param>
   <sink>
@@ -46,7 +45,7 @@
     <type>complex</type>
   </sink>
   <source>
-    <name>Msg out</name>
+    <name>$msg_out</name>
     <type>message</type>
     <optional>1</optional>
   </source>

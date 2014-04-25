@@ -340,43 +340,41 @@
  * Public License instead of this License.
  */
 
-#ifndef INCLUDED_RADAR_OS_CFAR_C_IMPL_H
-#define INCLUDED_RADAR_OS_CFAR_C_IMPL_H
+#ifndef INCLUDED_RADAR_ESTIMATOR_CW_IMPL_H
+#define INCLUDED_RADAR_ESTIMATOR_CW_IMPL_H
 
-#include <radar/os_cfar_c.h>
+#include <radar/estimator_cw.h>
 
 namespace gr {
   namespace radar {
 
-    class os_cfar_c_impl : public os_cfar_c
+    class estimator_cw_impl : public estimator_cw
     {
      private:
       // Nothing to declare in this block.
 
-     protected:
-      int calculate_output_stream_length(const gr_vector_int &ninput_items);
-
      public:
-      os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, const std::string& msg_out, const std::string& len_key);
-      ~os_cfar_c_impl();
+      estimator_cw_impl(float center_freq, const std::string& msg_in);
+      ~estimator_cw_impl();
+      void handle_msg(pmt::pmt_t msg);
       
-      int d_samp_compare, d_samp_protect, d_samp_rate;
-      float d_rel_threshold, d_mult_threshold;
+      float d_center_freq;
+      pmt::pmt_t d_port_id_in;
       
-      std::vector<float> d_pks, d_freq, d_hold_samp;
+      int d_timestamp;
+      std::vector<float> d_freq, d_pks;
+	  pmt::pmt_t d_ptimestamp, d_pfreq, d_ppks;
       
-      pmt::pmt_t d_port_id;
-      pmt::pmt_t d_ptimestamp,d_pfreq,d_ppks,d_value;
+      const static float c_light = 3e8;
 
       // Where all the action really happens
       int work(int noutput_items,
-		       gr_vector_int &ninput_items,
-		       gr_vector_const_void_star &input_items,
-		       gr_vector_void_star &output_items);
+	       gr_vector_const_void_star &input_items,
+	       gr_vector_void_star &output_items);
     };
 
   } // namespace radar
 } // namespace gr
 
-#endif /* INCLUDED_RADAR_OS_CFAR_C_IMPL_H */
+#endif /* INCLUDED_RADAR_ESTIMATOR_CW_IMPL_H */
 
