@@ -357,12 +357,12 @@ namespace gr {
       int calculate_output_stream_length(const gr_vector_int &ninput_items);
 
      public:
-      os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, bool block_consecutive, const std::string& len_key);
+      os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, bool merge_consecutive, const std::string& len_key);
       ~os_cfar_c_impl();
       
       int d_samp_compare, d_samp_protect, d_samp_rate;
       float d_rel_threshold, d_mult_threshold;
-      bool d_block_consecutive, d_consecutive;
+      bool d_merge_consecutive, d_consecutive;
       
       std::vector<float> d_pks, d_freq, d_hold_samp;
       

@@ -368,7 +368,7 @@ namespace gr {
        * class. radar::os_cfar_c::make is the public interface for
        * creating new instances.
        */
-      static sptr make(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, bool block_consecutive=true, const std::string& len_key="packet_len");
+      static sptr make(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, bool merge_consecutive=true, const std::string& len_key="packet_len");
     };
 
   } // namespace radar

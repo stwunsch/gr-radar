@@ -346,21 +346,22 @@
 
 #include <gnuradio/io_signature.h>
 #include "os_cfar_c_impl.h"
+#include <iostream>
 
 namespace gr {
   namespace radar {
 
     os_cfar_c::sptr
-    os_cfar_c::make(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, bool block_consecutive, const std::string& len_key)
+    os_cfar_c::make(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, bool merge_consecutive, const std::string& len_key)
     {
       return gnuradio::get_initial_sptr
-        (new os_cfar_c_impl(samp_rate, samp_compare, samp_protect, rel_threshold, mult_threshold, block_consecutive, len_key));
+        (new os_cfar_c_impl(samp_rate, samp_compare, samp_protect, rel_threshold, mult_threshold, merge_consecutive, len_key));
     }
 
     /*
      * The private constructor
      */
-    os_cfar_c_impl::os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, bool block_consecutive, const std::string& len_key)
+    os_cfar_c_impl::os_cfar_c_impl(int samp_rate, int samp_compare, int samp_protect, float rel_threshold, float mult_threshold, bool merge_consecutive, const std::string& len_key)
       : gr::tagged_stream_block("os_cfar_c",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(0, 0, 0), len_key)
@@ -371,7 +372,7 @@ namespace gr {
 		d_rel_threshold = rel_threshold;
 		d_mult_threshold = mult_threshold;
 		d_consecutive = false;
-		d_block_consecutive = block_consecutive;
+		d_merge_consecutive = merge_consecutive;
 		
 		// Register message port
 		d_port_id = pmt::mp("Msg out");
@@ -423,17 +424,31 @@ namespace gr {
 				}
 			}
 			std::sort(d_hold_samp.begin(),d_hold_samp.end()); // sort sample vector
+			
 			if(std::pow(std::abs(in[k]),2)>d_hold_samp[(int)((2*d_samp_compare-1)*d_rel_threshold)]*d_mult_threshold){ // check if in[k] is over dynamic threshold multiplied with mult_threshold
-				if(!d_consecutive){ // block consecutive peaks if d_consecutive is true
-					if(k<=ninput_items[0]/2) d_freq.push_back(k*d_samp_rate/(float)ninput_items[0]); // add frequency to message vector d_freq
-					else d_freq.push_back(-(float)d_samp_rate+k*d_samp_rate/(float)ninput_items[0]);
-					d_pks.push_back(pow(abs(in[k]),2)); // add abs-square to message vector d_pks
-					if(d_block_consecutive) d_consecutive = true; // set consecutive peaks to true if consecutive peaks should be blocked
+				// Add peaks and frequencies
+				if(k<=ninput_items[0]/2) d_freq.push_back(k*d_samp_rate/(float)ninput_items[0]); // add frequency to message vector d_freq
+				else d_freq.push_back(-(float)d_samp_rate+k*d_samp_rate/(float)ninput_items[0]);
+				d_pks.push_back(pow(abs(in[k]),2)); // add abs-square to message vector d_pks
+				
+				// Merge consecutive peaks
+				if( (d_merge_consecutive && d_consecutive) && d_freq.size()>1){
+					if(d_pks[d_pks.size()-2]<d_pks[d_pks.size()-1]){ // if last peak is lower, remove last one
+						d_pks.erase(d_pks.end()-2); // vec.end() points past the end!
+						d_freq.erase(d_freq.end()-2);
+					}
+					else{ // if last peak is higher, remove actual one
+						d_pks.erase(d_pks.end()-1);
+						d_freq.erase(d_freq.end()-1);
+					}
 				}
+				
+				d_consecutive = true; // tag next loop cycle with check for merging peaks
 			}
 			else{
-				d_consecutive = false; // release consecutive peaks blocker
+				d_consecutive = false; // release consecutive peaks merger if no peak is detected
 			}
+			
 		}
 		
 		// setup msg pmt

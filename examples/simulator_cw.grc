@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Fri Apr 25 23:56:41 2014</timestamp>
+  <timestamp>Sun Apr 27 12:00:00 2014</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -64,7 +64,7 @@
     <key>variable</key>
     <param>
       <key>id</key>
-      <value>samp_rate</value>
+      <value>decimator_fac</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -72,34 +72,11 @@
     </param>
     <param>
       <key>value</key>
-      <value>32000</value>
+      <value>4</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(188, 10)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>id</key>
-      <value>center_freq</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>1e9</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(292, 12)</value>
+      <value>(504, 13)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -133,7 +110,7 @@
     <key>variable</key>
     <param>
       <key>id</key>
-      <value>decimator_fac</value>
+      <value>center_freq</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -141,11 +118,34 @@
     </param>
     <param>
       <key>value</key>
-      <value>4</value>
+      <value>1e9</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(504, 13)</value>
+      <value>(292, 12)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>id</key>
+      <value>samp_rate</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>32000</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(188, 10)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -657,7 +657,7 @@
       <value>10</value>
     </param>
     <param>
-      <key>block_consecutive</key>
+      <key>merge_consecutive</key>
       <value>True</value>
     </param>
     <param>
@@ -678,7 +678,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(295, 442)</value>
+      <value>(294, 442)</value>
     </param>
     <param>
       <key>_rotation</key>

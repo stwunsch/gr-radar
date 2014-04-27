@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Fri Apr 25 23:59:31 2014</timestamp>
+  <timestamp>Sun Apr 27 11:59:23 2014</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -899,7 +899,7 @@
       <value>15</value>
     </param>
     <param>
-      <key>block_consecutive</key>
+      <key>merge_consecutive</key>
       <value>True</value>
     </param>
     <param>
