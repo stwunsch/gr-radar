@@ -4,15 +4,16 @@ GNU Radio Radar Toolbox
 **Install guide**  
 Change to any folder in your home directory and enter following commands in your terminal.
 
-`git clone https://github.com/stwunsch/gr-radar.git`  
+`git clone https://github.com/stwunsch/gr-radar.git` // clone this repository  
 `cd gr-radar/`  
-`mkdir build`  
+`mkdir build` // make build folder  
 `cd build/`  
-`cmake ../`  
-`make`  
-`ctest`
+`cmake ../` // build makefiles  
+`make` // build toolbox  
+`ctest` // run tests  
+`sudo make install` // install toolbox
 
-If ctest responds with '100% tests passed', the toolbox should be installed correctly.
+If ctest responds with '100% tests passed', the toolbox should be build correctly.
 
 **Development progress blog**  
 https://grradar.wordpress.com/
