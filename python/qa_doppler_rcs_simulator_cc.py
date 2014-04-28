@@ -363,9 +363,9 @@ class qa_doppler_rcs_simulator_cc (gr_unittest.TestCase):
         frequency = 0
         amplitude = 1
         
-        Range = [10]
-        velocity = [15]
-        rcs = [1e9]
+        Range = 10
+        velocity = 15
+        rcs = 1e9
         center_freq = 1e9
         
         src = radar.signal_generator_cw_c(packet_len,samp_rate,frequency,amplitude)
@@ -382,7 +382,7 @@ class qa_doppler_rcs_simulator_cc (gr_unittest.TestCase):
         
         # check data
         data = snk.data()
-        doppler_freq = 2*velocity[0]*center_freq/3e8 # peak estimation, calc with doppler formula
+        doppler_freq = 2*velocity*center_freq/3e8 # peak estimation, calc with doppler formula
         fft = numpy.fft.fft(data) # get fft
         num = np.argmax(abs(fft)) # index of max sample
         fft_freq = samp_rate*num/len(fft) # calc freq out of max sample index, works only for frequencies < samp_rate/2!

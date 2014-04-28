@@ -7,17 +7,17 @@
   <param>
     <name>Range</name>
     <key>range</key>
-    <type>real_vector</type>
+    <type>float</type>
   </param>
   <param>
     <name>Velocity</name>
     <key>velocity</key>
-    <type>real_vector</type>
+    <type>float</type>
   </param>
   <param>
     <name>RCS</name>
     <key>rcs</key>
-    <type>real_vector</type>
+    <type>float</type>
   </param>
   <param>
     <name>Sample rate</name>
@@ -30,7 +30,7 @@
     <type>float</type>
   </param>
   <param>
-    <name>Incoming signal amplitude</name>
+    <name>Amplitude</name>
     <key>amplitude</key>
     <type>float</type>
   </param>

@@ -354,16 +354,15 @@ namespace gr {
       // Nothing to declare in this block.
 
      public:
-      doppler_rcs_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, int samp_rate, float center_freq, float amplitude);
+      doppler_rcs_simulator_cc_impl(float range, float velocity, float rcs, int samp_rate, float center_freq, float amplitude);
       ~doppler_rcs_simulator_cc_impl();
       
-      std::vector<float> d_range, d_velocity, d_rcs;
+      float d_range, d_velocity, d_rcs;
       int d_samp_rate;
       float d_center_freq;
       
-      int d_num_targets;
-      std::vector<gr_complex> d_phase;
-      std::vector<float> d_freq_shift, d_scale_ampl;
+      gr_complex d_phase;
+      float d_freq_shift, d_scale_ampl;
       
       float const static c_light = 3e8;
 

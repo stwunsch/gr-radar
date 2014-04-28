@@ -352,7 +352,7 @@ namespace gr {
   namespace radar {
 
     doppler_rcs_simulator_cc::sptr
-    doppler_rcs_simulator_cc::make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, int samp_rate, float center_freq, float amplitude)
+    doppler_rcs_simulator_cc::make(float range, float velocity, float rcs, int samp_rate, float center_freq, float amplitude)
     {
       return gnuradio::get_initial_sptr
         (new doppler_rcs_simulator_cc_impl(range, velocity, rcs, samp_rate, center_freq, amplitude));
@@ -361,33 +361,26 @@ namespace gr {
     /*
      * The private constructor
      */
-    doppler_rcs_simulator_cc_impl::doppler_rcs_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, int samp_rate, float center_freq, float amplitude)
+    doppler_rcs_simulator_cc_impl::doppler_rcs_simulator_cc_impl(float range, float velocity, float rcs, int samp_rate, float center_freq, float amplitude)
       : gr::sync_block("doppler_rcs_simulator_cc",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(1, 1, sizeof(gr_complex)))
     {
-		d_range = range; // vector of ranges of targets, k-th item in vector represents k-th target, needed for rcs estimation
-		d_velocity = velocity; // same as range vector, needed for doppler estimation
-		d_rcs = rcs; // same as range vector, needed for rcs estimation
+		d_range = range;
+		d_velocity = velocity;
+		d_rcs = rcs;
+		
 		d_samp_rate = samp_rate;
 		d_center_freq = center_freq; // center frequency of simulated hardware for doppler estimation
-		
-		// Get number of targets
-		d_num_targets = d_velocity.size();
-		if(d_velocity.size()!=d_rcs.size()||d_velocity.size()!=d_range.size()) std::cout << "ERROR: different length of target vectors. len(velocity)!=len(rcs)||len(velocity)!=len(range) [doppler_rcs_simulator_cc]" << std::endl; // FIXME: throw better exception!
-		
-		// Set phases for adding doppler shift on zero (done with init)
-        d_phase.resize(d_num_targets);
+
+		// Set phase for adding doppler shift on zero
+        d_phase = 0;
         
-        // Get frequency shifts (calc with doppler formula)
-        d_freq_shift.resize(d_num_targets);
-        for(int k=0; k<d_num_targets; k++) d_freq_shift[k] = 2*d_velocity[k]*d_center_freq/c_light;
+        // Get frequency shift (calc with doppler formula)
+        d_freq_shift = 2*d_velocity*d_center_freq/c_light;
         
-        // Get signal amplitudes of reflections with free space path loss and rcs (radar equation)
-        d_scale_ampl.resize(d_num_targets);
-        for(int k=0; k<d_num_targets; k++){
-			d_scale_ampl[k] = amplitude*c_light/center_freq*std::sqrt(d_rcs[k])/std::pow(d_range[k],2)/std::pow(4*M_PI,3.0/2.0); // sqrt of radar equation as amplitude estimation
-		}
+        // Get signal amplitude of reflection with free space path loss and rcs (radar equation)
+		d_scale_ampl = amplitude*c_light/center_freq*std::sqrt(d_rcs)/std::pow(d_range,2)/std::pow(4*M_PI,3.0/2.0); // sqrt of radar equation as amplitude estimation
 	}
 
     /*
@@ -411,11 +404,9 @@ namespace gr {
         memset(out, 0, noutput_items*sizeof(gr_complex));
         
         // Add doppler shift
-        for(int k=0; k<d_num_targets; k++){ // go through targets and add doppler shift
-			for(int i=0; i<noutput_items; i++){
-				out[i] += in[i]*d_scale_ampl[k]*std::exp(d_phase[k]); // add doppler shift with rescaled amplitude
-				d_phase[k] = 1j*std::fmod(std::imag(d_phase[k])+2*M_PI*d_freq_shift[k]/(float)d_samp_rate,2*M_PI); // integrate phases
-			}
+		for(int i=0; i<noutput_items; i++){
+			out[i] += in[i]*d_scale_ampl*std::exp(d_phase); // add doppler shift with rescaled amplitude
+			d_phase = 1j*std::fmod(std::imag(d_phase)+2*M_PI*d_freq_shift/(float)d_samp_rate,2*M_PI); // integrate phases
 		}
 
         // Tell runtime system how many output items we produced.
