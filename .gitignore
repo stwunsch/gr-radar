@@ -1,2 +1,3 @@
 build/
-examples/top_block.py
+examples/simulators/top_block.py
+examples/tests/top_block.py

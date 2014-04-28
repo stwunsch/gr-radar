@@ -1,38 +1,46 @@
 <?xml version="1.0"?>
 <block>
-  <name>r_v_rcs_simulator_cc</name>
+  <name>R v RCS Simulator</name>
   <key>radar_r_v_rcs_simulator_cc</key>
-  <category>radar</category>
+  <category>RADAR</category>
   <import>import radar</import>
   <make>radar.r_v_rcs_simulator_cc($rnge, $velocity, $rcs, $samp_rate, $center_freq, $amplitude)</make>
-  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
-       Sub-nodes:
-       * name
-       * key (makes the value accessible as $keyname, e.g. in the make node)
-       * type -->
   <param>
-    <name>...</name>
-    <key>...</key>
-    <type>...</type>
+    <name>Range</name>
+    <key>rnge</key>
+    <type>float_vector</type>
   </param>
-
-  <!-- Make one 'sink' node per input. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
+  <param>
+    <name>Velocity</name>
+    <key>velocity</key>
+    <type>float_vector</type>
+  </param>
+  <param>
+    <name>RCS</name>
+    <key>rcs</key>
+    <type>float_vector</type>
+  </param>
+  <param>
+    <name>Sample rate</name>
+    <key>samp_rate</key>
+    <type>int</type>
+  </param>
+  <param>
+    <name>Center frequency</name>
+    <key>center_freq</key>
+    <type>float</type>
+  </param>
+  <param>
+    <name>Amplitude input signal</name>
+    <key>amplitude</key>
+    <type>int</type>
+  </param>
   <sink>
-    <name>in</name>
-    <type><!-- e.g. int, float, complex, byte, short, xxx_vector, ...--></type>
+    <name>IQ in</name>
+    <type>complex</type>
   </sink>
-
-  <!-- Make one 'source' node per output. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
   <source>
-    <name>out</name>
-    <type><!-- e.g. int, float, complex, byte, short, xxx_vector, ...--></type>
+    <name>IQ out</name>
+    <type>complex</type>
   </source>
 </block>
