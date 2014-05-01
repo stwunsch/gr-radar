@@ -351,7 +351,7 @@ namespace gr {
   namespace radar {
 
     signal_generator_cw_c::sptr
-    signal_generator_cw_c::make(int packet_len, int samp_rate, float frequency, float amplitude, const std::string& len_key)
+    signal_generator_cw_c::make(int packet_len, int samp_rate, std::vector<float> frequency, float amplitude, const std::string& len_key)
     {
       return gnuradio::get_initial_sptr
         (new signal_generator_cw_c_impl(packet_len, samp_rate, frequency, amplitude, len_key));
@@ -360,7 +360,7 @@ namespace gr {
     /*
      * The private constructor
      */
-    signal_generator_cw_c_impl::signal_generator_cw_c_impl(int packet_len, int samp_rate, float frequency, float amplitude, const std::string& len_key)
+    signal_generator_cw_c_impl::signal_generator_cw_c_impl(int packet_len, int samp_rate, std::vector<float> frequency, float amplitude, const std::string& len_key)
       : gr::sync_block("signal_generator_cw_c",
               gr::io_signature::make(0, 0, 0),
               gr::io_signature::make(1, 1, sizeof(gr_complex)))
@@ -373,7 +373,8 @@ namespace gr {
 		d_key = pmt::string_to_symbol(len_key); // set tag identifier for tagged stream
 		d_value = pmt::from_long(packet_len); // set length of 1 cw packet as tagged stream
 		d_srcid = pmt::string_to_symbol("sig_gen_cw"); // set block identifier
-		d_phase = (0,0); // set start phase to 0
+		d_num_freq = d_frequency.size();
+		d_phase.resize(d_num_freq) ; // set start phase to 0
 	}
 
     /*
@@ -392,14 +393,19 @@ namespace gr {
 
         // Do <+signal processing+>
         
+        // Set output to zero
+        std::memset(out, 0, noutput_items*sizeof(gr_complex));
+        
         // Integrate phase for iq signal
         for(int i=0; i<noutput_items; i++){
 			// Set tag on every packet_len-th item
 			if((nitems_written(0)+i)%d_packet_len==0) add_item_tag(0, nitems_written(0)+i, d_key, d_value, d_srcid);
 			
 			// Write sample
-			*out++ = d_amplitude*exp(d_phase);
-			d_phase = 1j*std::fmod(imag(d_phase)+2*M_PI*d_frequency/(float)d_samp_rate,2*M_PI);
+			for(int k=0; k<d_num_freq; k++){ // Go through frequencies
+				out[i] += d_amplitude/(float)d_num_freq*exp(d_phase[k]); // FIXME: implementation is correct?
+				d_phase[k] = 1j*std::fmod(imag(d_phase[k])+2*M_PI*d_frequency[k]/(float)d_samp_rate,2*M_PI);
+			}
 		}
 
         // Tell runtime system how many output items we produced.

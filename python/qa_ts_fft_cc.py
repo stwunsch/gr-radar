@@ -360,7 +360,7 @@ class qa_ts_fft_cc (gr_unittest.TestCase):
 		
 		packet_len = test_len
 		samp_rate = 2000
-		frequency = 100
+		frequency = (100,100)
 		amplitude = 1
 		
 		src = radar.signal_generator_cw_c(packet_len,samp_rate,frequency,amplitude)

@@ -359,7 +359,7 @@ class qa_signal_generator_cw_c (gr_unittest.TestCase):
 		
 		packet_len = 1024
 		samp_rate = 32000
-		frequency = 500
+		frequency = (500, 500)
 		amplitude = 1
 		
 		test = radar.signal_generator_cw_c(packet_len, samp_rate, frequency, amplitude)
@@ -374,14 +374,14 @@ class qa_signal_generator_cw_c (gr_unittest.TestCase):
 		phase = 0
 		for i in range(test_len):
 			ref_data[i] = amplitude*np.exp(1j*phase)
-			phase = phase + 2*np.pi*frequency/samp_rate
+			phase = phase + 2*np.pi*frequency[0]/samp_rate
 			#phase = np.modf(phase,2*np.pi)
 		
 		ref_data = [0]*test_len
 		phase = 0
 		for i in range(test_len):
 			ref_data[i] = amplitude*np.exp(1j*phase)
-			phase = phase+2*np.pi*frequency/samp_rate
+			phase = phase+2*np.pi*frequency[0]/samp_rate
 		
 		# check data
 		out_data = sink.data()

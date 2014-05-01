@@ -17,7 +17,7 @@
   <param>
     <name>Frequency</name>
     <key>frequency</key>
-    <type>float</type>
+    <type>real_vector</type>
   </param>
   <param>
     <name>Amplitude</name>

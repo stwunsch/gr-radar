@@ -354,14 +354,16 @@ namespace gr {
       // Nothing to declare in this block.
 
      public:
-      signal_generator_cw_c_impl(int packet_len, int samp_rate, float frequency, float amplitude, const std::string& len_key);
+      signal_generator_cw_c_impl(int packet_len, int samp_rate, std::vector<float> frequency, float amplitude, const std::string& len_key);
       ~signal_generator_cw_c_impl();
       
       int d_packet_len, d_samp_rate;
-      float d_frequency, d_amplitude;
+      float d_amplitude;
+      std::vector<float> d_frequency;
+      int d_num_freq;
       
       pmt::pmt_t d_key, d_value, d_srcid;
-      std::complex<float> d_phase;
+      std::vector<gr_complex> d_phase;
 
       // Where all the action really happens
       int work(int noutput_items,

@@ -368,7 +368,7 @@ namespace gr {
        * class. radar::signal_generator_cw_c::make is the public interface for
        * creating new instances.
        */
-      static sptr make(int packet_len, int samp_rate, float frequency, float amplitude, const std::string& len_key="packet_len");
+      static sptr make(int packet_len, int samp_rate, std::vector<float> frequency, float amplitude, const std::string& len_key="packet_len");
     };
 
   } // namespace radar

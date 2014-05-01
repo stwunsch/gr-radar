@@ -362,7 +362,7 @@ class qa_estimator_cw (gr_unittest.TestCase):
 		
 		center_freq = 1e9
 
-		src = radar.signal_generator_cw_c(packet_len,samp_rate,0,1)
+		src = radar.signal_generator_cw_c(packet_len,samp_rate,(0,0),1)
 		head = blocks.head(8,test_len)
 		sim = radar.static_target_simulator_cc((10,10),(15,15),(1e9,1e9),(0,0),samp_rate,center_freq,1)
 		mult = blocks.multiply_cc()

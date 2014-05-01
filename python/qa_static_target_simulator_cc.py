@@ -360,7 +360,7 @@ class qa_static_target_simulator_cc (gr_unittest.TestCase):
 		
 		packet_len = test_len
 		samp_rate = 2000
-		frequency = 0
+		frequency = (0,0)
 		amplitude = 1
 		
 		Range = (10, 10)
