@@ -23,6 +23,11 @@ res_f_cw = samp_rate/samp_cw
 res_f_up = samp_rate/samp_up
 res_f_down = samp_rate/samp_down
 
+trans_rate = samp_rate*8.0/1024.0/1024.0
+dec_fac = 12
+trans_rate_res = trans_rate/dec_fac
+samp_rate_res = samp_rate/dec_fac
+
 print "// FMCW peaks"
 print "CW:", freq_cw, "Hz"
 print "up-chirp:", freq_up, "Hz"
@@ -33,3 +38,10 @@ print "res freq fft (cw, up, down):", res_f_cw, res_f_up, res_f_down, "Hz"
 print "res v:", res_v, "m/s"
 print "res r:", res_r, "m"
 print "res t:", res_t, "s"
+print
+print "// Transfer rate"
+print "bandwith: ", samp_rate/1000.0, "kHz"
+print "rate:", trans_rate, "MByte/s"
+print "resampler decimation:", dec_fac
+print "bandwith after resampling:", samp_rate_res/1000, "kHz"
+print "rate after resampling:", trans_rate_res, "MByte/s"

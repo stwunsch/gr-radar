@@ -340,40 +340,39 @@
  * Public License instead of this License.
  */
 
-#ifndef INCLUDED_RADAR_DOPPLER_RCS_SIMULATOR_CC_IMPL_H
-#define INCLUDED_RADAR_DOPPLER_RCS_SIMULATOR_CC_IMPL_H
 
-#include <radar/doppler_rcs_simulator_cc.h>
+#ifndef INCLUDED_RADAR_STATIC_TARGET_SIMULATOR_CC_H
+#define INCLUDED_RADAR_STATIC_TARGET_SIMULATOR_CC_H
+
+#include <radar/api.h>
+#include <gnuradio/tagged_stream_block.h>
 
 namespace gr {
   namespace radar {
 
-    class doppler_rcs_simulator_cc_impl : public doppler_rcs_simulator_cc
+    /*!
+     * \brief <+description of block+>
+     * \ingroup radar
+     *
+     */
+    class RADAR_API static_target_simulator_cc : virtual public gr::tagged_stream_block
     {
-     private:
-      // Nothing to declare in this block.
-
      public:
-      doppler_rcs_simulator_cc_impl(float range, float velocity, float rcs, int samp_rate, float center_freq, float amplitude);
-      ~doppler_rcs_simulator_cc_impl();
-      
-      float d_range, d_velocity, d_rcs;
-      int d_samp_rate;
-      float d_center_freq;
-      
-      gr_complex d_phase;
-      float d_freq_shift, d_scale_ampl;
-      
-      float const static c_light = 3e8;
+      typedef boost::shared_ptr<static_target_simulator_cc> sptr;
 
-      // Where all the action really happens
-      int work(int noutput_items,
-	       gr_vector_const_void_star &input_items,
-	       gr_vector_void_star &output_items);
+      /*!
+       * \brief Return a shared_ptr to a new instance of radar::static_target_simulator_cc.
+       *
+       * To avoid accidental use of raw pointers, radar::static_target_simulator_cc's
+       * constructor is in a private implementation
+       * class. radar::static_target_simulator_cc::make is the public interface for
+       * creating new instances.
+       */
+      static sptr make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, float amplitude, const std::string& len_key="packet_len");
     };
 
   } // namespace radar
 } // namespace gr
 
-#endif /* INCLUDED_RADAR_DOPPLER_RCS_SIMULATOR_CC_IMPL_H */
+#endif /* INCLUDED_RADAR_STATIC_TARGET_SIMULATOR_CC_H */
 

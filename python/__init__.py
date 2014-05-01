@@ -45,7 +45,7 @@ if _RTLD_GLOBAL != 0:
 from radar_swig import *
 
 # import any pure python here
-from r_v_rcs_simulator_cc import r_v_rcs_simulator_cc
+
 #
 
 # ----------------------------------------------------------------

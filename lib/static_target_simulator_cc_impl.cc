@@ -345,68 +345,98 @@
 #endif
 
 #include <gnuradio/io_signature.h>
-#include "doppler_rcs_simulator_cc_impl.h"
-#include <iostream>
+#include "static_target_simulator_cc_impl.h"
 
 namespace gr {
   namespace radar {
 
-    doppler_rcs_simulator_cc::sptr
-    doppler_rcs_simulator_cc::make(float range, float velocity, float rcs, int samp_rate, float center_freq, float amplitude)
+    static_target_simulator_cc::sptr
+    static_target_simulator_cc::make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, float amplitude, const std::string& len_key)
     {
       return gnuradio::get_initial_sptr
-        (new doppler_rcs_simulator_cc_impl(range, velocity, rcs, samp_rate, center_freq, amplitude));
+        (new static_target_simulator_cc_impl(range, velocity, rcs, azimuth, samp_rate, center_freq, amplitude, len_key));
     }
 
     /*
      * The private constructor
      */
-    doppler_rcs_simulator_cc_impl::doppler_rcs_simulator_cc_impl(float range, float velocity, float rcs, int samp_rate, float center_freq, float amplitude)
-      : gr::sync_block("doppler_rcs_simulator_cc",
+    static_target_simulator_cc_impl::static_target_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, float amplitude, const std::string& len_key)
+      : gr::tagged_stream_block("static_target_simulator_cc",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
-              gr::io_signature::make(1, 1, sizeof(gr_complex)))
+              gr::io_signature::make(1, 1, sizeof(gr_complex)), len_key)
     {
 		d_range = range;
 		d_velocity = velocity;
 		d_rcs = rcs;
-		
-		d_samp_rate = samp_rate;
+		d_azimuth = azimuth;
 		d_center_freq = center_freq; // center frequency of simulated hardware for doppler estimation
-
-		// Set phase for adding doppler shift on zero
-        d_phase = 0;
-        
-        // Get frequency shift (calc with doppler formula)
-        d_freq_shift = 2*d_velocity*d_center_freq/c_light;
-        
-        // Get signal amplitude of reflection with free space path loss and rcs (radar equation)
-		d_scale_ampl = amplitude*c_light/center_freq*std::sqrt(d_rcs)/std::pow(d_range,2)/std::pow(4*M_PI,3.0/2.0); // sqrt of radar equation as amplitude estimation
+		d_samp_rate = samp_rate;
+		d_amplitude = amplitude; // amplitude of incoming signal for amplitude estimation of reflected signal
+		
+		// Get num targets
+		d_num_targets = range.size(); // FIXME: throw exceptions for len(range)!=len(velocity)!=...
+		
+		// Get doppler frequencies
+		d_doppler.resize(d_num_targets);
+		for(int k=0; k<d_num_targets; k++) d_doppler[k] = 2*d_velocity[k]*d_center_freq/c_light;
+		
+		// Get signal amplitude of reflection with free space path loss and rcs (radar equation)
+		d_scale_ampl.resize(d_num_targets);
+		for(int k=0; k<d_num_targets; k++){
+			d_scale_ampl[k] = d_amplitude*c_light/d_center_freq*std::sqrt(d_rcs[k])/std::pow(d_range[k],2)/std::pow(4*M_PI,3.0/2.0); // sqrt of radar equation as amplitude estimation
+		} // FIXME: is this correct?
 	}
 
     /*
      * Our virtual destructor.
      */
-    doppler_rcs_simulator_cc_impl::~doppler_rcs_simulator_cc_impl()
+    static_target_simulator_cc_impl::~static_target_simulator_cc_impl()
     {
     }
 
     int
-    doppler_rcs_simulator_cc_impl::work(int noutput_items,
-			  gr_vector_const_void_star &input_items,
-			  gr_vector_void_star &output_items)
+    static_target_simulator_cc_impl::calculate_output_stream_length(const gr_vector_int &ninput_items)
+    {
+      int noutput_items = ninput_items[0];
+      return noutput_items ;
+    }
+
+    int
+    static_target_simulator_cc_impl::work (int noutput_items,
+                       gr_vector_int &ninput_items,
+                       gr_vector_const_void_star &input_items,
+                       gr_vector_void_star &output_items)
     {
         const gr_complex *in = (const gr_complex *) input_items[0];
         gr_complex *out = (gr_complex *) output_items[0];
+        
+        // FIXME: use volk?
+        
+        // Set output items to tagged stream length
+        noutput_items = ninput_items[0];
 
         // Do <+signal processing+>
         
         // Set output to zero
-        memset(out, 0, noutput_items*sizeof(gr_complex));
+        std::memset(out, 0, noutput_items*sizeof(gr_complex));
         
-        // Add doppler shift
-		for(int i=0; i<noutput_items; i++){
-			out[i] += in[i]*d_scale_ampl*std::exp(d_phase); // add doppler shift with rescaled amplitude
-			d_phase = 1j*std::fmod(std::imag(d_phase)+2*M_PI*d_freq_shift/(float)d_samp_rate,2*M_PI); // integrate phases
+        // Set length buffer
+        hold_in.resize(noutput_items);
+        
+        for(int k=0; k<d_num_targets; k++){ // Go through targets
+			// Add doppler shift
+			d_phase = 0;
+			for(int i=0; i<noutput_items; i++){
+				hold_in[i] = in[i]/d_amplitude*d_scale_ampl[k]*std::exp(d_phase); // add doppler shift with rescaled amplitude // FIXME: in[i]/d_amplitude correct for norm amplitude and rescaling?
+				d_phase = 1j*std::fmod(std::imag(d_phase)+2*M_PI*d_doppler[k]/(float)d_samp_rate,2*M_PI); // integrate phase
+			}
+			
+			// FIXME: Add time shift
+			
+			// FIXME: Add azimuth
+			
+			// Add to output
+			for(int i=0; i<noutput_items; i++) out[i] += hold_in[i];
 		}
 
         // Tell runtime system how many output items we produced.

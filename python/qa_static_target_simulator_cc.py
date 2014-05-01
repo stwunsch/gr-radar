@@ -342,13 +342,11 @@
 
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
-from r_v_rcs_simulator_cc import r_v_rcs_simulator_cc
 import radar_swig as radar
-
 import numpy as np
 import numpy.fft
 
-class qa_r_v_rcs_simulator_cc (gr_unittest.TestCase):
+class qa_static_target_simulator_cc (gr_unittest.TestCase):
 
 	def setUp (self):
 		self.tb = gr.top_block ()
@@ -357,8 +355,7 @@ class qa_r_v_rcs_simulator_cc (gr_unittest.TestCase):
 		self.tb = None
 
 	def test_001_t (self):
-		## set up fg
-		c_light = 3e8
+		# set up fg
 		test_len = 1000
 		
 		packet_len = test_len
@@ -366,14 +363,15 @@ class qa_r_v_rcs_simulator_cc (gr_unittest.TestCase):
 		frequency = 0
 		amplitude = 1
 		
-		Range = (20, 10, 15)
-		velocity = (15, 30, 40)
-		rcs = (1e9, 1e9, 1e9)
+		Range = (10, 10)
+		velocity = (15, 15)
+		rcs = (1e9, 1e9)
+		azimuth = (0, 0)
 		center_freq = 1e9
 		
 		src = radar.signal_generator_cw_c(packet_len,samp_rate,frequency,amplitude)
 		head = blocks.head(8,test_len)
-		sim = r_v_rcs_simulator_cc(Range, velocity, rcs, samp_rate, center_freq, amplitude)
+		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq, amplitude)
 		mult = blocks.multiply_cc()
 		snk = blocks.vector_sink_c()
 		
@@ -383,40 +381,15 @@ class qa_r_v_rcs_simulator_cc (gr_unittest.TestCase):
 		self.tb.connect(mult,snk)
 		self.tb.run ()
 		
-		## check data
+		# check data
 		data = snk.data()
+		doppler_freq = 2*velocity[0]*center_freq/3e8 # peak estimation, calc with doppler formula
 		fft = numpy.fft.fft(data) # get fft
-		fft_abs = [0]*len(fft);
-		for k in range(len(fft)): # abs of fft
-			fft_abs[k] = abs(fft[k])
+		num = np.argmax(abs(fft)) # index of max sample
+		fft_freq = samp_rate*num/len(fft) # calc freq out of max sample index, works only for frequencies < samp_rate/2!
 		
-		# get peaks of fft
-		threshold = np.mean(fft_abs)*30
-		freq = []
-		for k in range(len(fft_abs)/2): # only peaks from 0 to samp_rate/2
-			if fft_abs[k] > threshold:
-				freq.append(k*samp_rate/len(fft_abs))
-		
-		# get calc doppler frequencies
-		freq_comp = []		
-		for k in range(len(velocity)):
-			freq_comp.append(2*velocity[k]*center_freq/c_light)
-			
-		# find best values out of fft peaks
-		freq_fft_best = [0]*len(freq_comp)
-		for k in range(len(freq_comp)):
-			hold = 1e20
-			for l in range(len(freq)):
-				if abs(freq[l]-freq_comp[k])<hold:
-					hold = abs(freq[l]-freq_comp[k])
-					freq_fft_best[k] = freq[l]
-		
-		# Test on fraction of calc frequencies and fft frequencies in compare to 1
-		frac = []
-		for k in range(len(freq_comp)):
-			frac.append(freq_fft_best[k]/freq_comp[k])
-			
-		self.assertFloatTuplesAlmostEqual(frac,[1.0]*len(freq_comp),1)
+		self.assertAlmostEqual(fft_freq,doppler_freq,2) # check if peak in data is doppler peak
+
 
 if __name__ == '__main__':
-	gr_unittest.run(qa_r_v_rcs_simulator_cc)#, "qa_r_v_rcs_simulator_cc.xml")
+	gr_unittest.run(qa_static_target_simulator_cc)#, "qa_static_target_simulator_cc.xml")

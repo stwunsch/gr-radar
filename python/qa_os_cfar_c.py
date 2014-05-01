@@ -356,6 +356,7 @@ class qa_os_cfar_c (gr_unittest.TestCase):
         # set up fg
         self.tb.run ()
         # check data
+        # FIXME: add testcase os_cfar (how??)
 
 
 if __name__ == '__main__':

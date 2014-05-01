@@ -24,10 +24,10 @@ install(FILES
     api.h
     signal_generator_cw_c.h
     signal_generator_fmcw_c.h
-    doppler_rcs_simulator_cc.h
     split_cc.h
     os_cfar_c.h
     ts_fft_cc.h
     estimator_cw.h
-    print_results.h DESTINATION include/radar
+    print_results.h
+    static_target_simulator_cc.h DESTINATION include/radar
 )

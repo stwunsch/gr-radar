@@ -1,24 +1,28 @@
-<?xml version="1.0"?>
 <block>
-  <name>R v RCS Simulator</name>
-  <key>radar_r_v_rcs_simulator_cc</key>
+  <name>Static target simulator</name>
+  <key>radar_static_target_simulator_cc</key>
   <category>RADAR</category>
   <import>import radar</import>
-  <make>radar.r_v_rcs_simulator_cc($rnge, $velocity, $rcs, $samp_rate, $center_freq, $amplitude)</make>
+  <make>radar.static_target_simulator_cc($range, $velocity, $rcs, $azimuth, $samp_rate, $center_freq, $amplitude, $len_key)</make>
   <param>
     <name>Range</name>
-    <key>rnge</key>
-    <type>float_vector</type>
+    <key>range</key>
+    <type>real_vector</type>
   </param>
   <param>
     <name>Velocity</name>
     <key>velocity</key>
-    <type>float_vector</type>
+    <type>real_vector</type>
   </param>
   <param>
     <name>RCS</name>
     <key>rcs</key>
-    <type>float_vector</type>
+    <type>real_vector</type>
+  </param>
+  <param>
+    <name>Azimuth</name>
+    <key>azimuth</key>
+    <type>real_vector</type>
   </param>
   <param>
     <name>Sample rate</name>
@@ -31,9 +35,15 @@
     <type>float</type>
   </param>
   <param>
-    <name>Amplitude input signal</name>
+    <name>Amplitude (input signal)</name>
     <key>amplitude</key>
-    <type>int</type>
+    <type>float</type>
+  </param>
+  <param>
+    <name>Packet length key</name>
+    <key>len_key</key>
+    <value>"packet_len"</value>
+    <type>string</type>
   </param>
   <sink>
     <name>IQ in</name>

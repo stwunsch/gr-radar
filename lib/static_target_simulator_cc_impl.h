@@ -340,39 +340,46 @@
  * Public License instead of this License.
  */
 
+#ifndef INCLUDED_RADAR_STATIC_TARGET_SIMULATOR_CC_IMPL_H
+#define INCLUDED_RADAR_STATIC_TARGET_SIMULATOR_CC_IMPL_H
 
-#ifndef INCLUDED_RADAR_DOPPLER_RCS_SIMULATOR_CC_H
-#define INCLUDED_RADAR_DOPPLER_RCS_SIMULATOR_CC_H
-
-#include <radar/api.h>
-#include <gnuradio/sync_block.h>
+#include <radar/static_target_simulator_cc.h>
 
 namespace gr {
   namespace radar {
 
-    /*!
-     * \brief <+description of block+>
-     * \ingroup radar
-     *
-     */
-    class RADAR_API doppler_rcs_simulator_cc : virtual public gr::sync_block
+    class static_target_simulator_cc_impl : public static_target_simulator_cc
     {
-     public:
-      typedef boost::shared_ptr<doppler_rcs_simulator_cc> sptr;
+     private:
+      // Nothing to declare in this block.
 
-      /*!
-       * \brief Return a shared_ptr to a new instance of radar::doppler_rcs_simulator_cc.
-       *
-       * To avoid accidental use of raw pointers, radar::doppler_rcs_simulator_cc's
-       * constructor is in a private implementation
-       * class. radar::doppler_rcs_simulator_cc::make is the public interface for
-       * creating new instances.
-       */
-      static sptr make(float range, float velocity, float rcs, int samp_rate, float center_freq, float amplitude);
+     protected:
+      int calculate_output_stream_length(const gr_vector_int &ninput_items);
+
+     public:
+      static_target_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, float amplitude, const std::string& len_key);
+      ~static_target_simulator_cc_impl();
+      
+      std::vector<float> d_range, d_velocity, d_rcs, d_azimuth;
+      int d_samp_rate;
+      float d_center_freq, d_amplitude;
+      
+      int d_num_targets;
+      std::vector<float> d_doppler, d_scale_ampl;
+      gr_complex d_phase;
+      std::vector<gr_complex> hold_in;
+      
+      const static float c_light = 3e8;
+
+      // Where all the action really happens
+      int work(int noutput_items,
+		       gr_vector_int &ninput_items,
+		       gr_vector_const_void_star &input_items,
+		       gr_vector_void_star &output_items);
     };
 
   } // namespace radar
 } // namespace gr
 
-#endif /* INCLUDED_RADAR_DOPPLER_RCS_SIMULATOR_CC_H */
+#endif /* INCLUDED_RADAR_STATIC_TARGET_SIMULATOR_CC_IMPL_H */
 

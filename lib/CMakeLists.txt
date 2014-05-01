@@ -27,12 +27,12 @@ link_directories(${Boost_LIBRARY_DIRS})
 list(APPEND radar_sources
     signal_generator_cw_c_impl.cc
     signal_generator_fmcw_c_impl.cc
-    doppler_rcs_simulator_cc_impl.cc
     split_cc_impl.cc
     os_cfar_c_impl.cc
     ts_fft_cc_impl.cc
     estimator_cw_impl.cc
-    print_results_impl.cc )
+    print_results_impl.cc
+    static_target_simulator_cc_impl.cc )
 
 set(radar_sources "${radar_sources}" PARENT_SCOPE)
 if(NOT radar_sources)
