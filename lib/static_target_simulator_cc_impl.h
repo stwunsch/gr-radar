@@ -368,11 +368,12 @@ namespace gr {
       
       int d_num_targets;
       std::vector<float> d_doppler, d_scale_ampl, d_timeshift;
-      gr_complex d_phase;
-      std::vector<gr_complex> hold_in;
+      gr_complex d_phase_doppler, d_phase_time;
+      std::vector<gr_complex> d_hold_in;
       
       fftwf_plan d_fft_plan, d_ifft_plan;
-      std::vector<gr_complex> in_fft;
+      std::vector<gr_complex> d_in_fft;
+      std::vector<std::vector<gr_complex> > d_filt_doppler, d_filt_time;
            
       const static float c_light = 3e8;
 

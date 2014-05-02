@@ -1,14 +1,14 @@
 c_light = 3e8
 
-center_freq = 5e9 # center frequency [Hz]
-samp_rate = 2**23 # sample frequency [Hz]
+center_freq = 5.7e9 # center frequency [Hz]
+samp_rate = 10000000 # sample frequency [Hz]
 sweep_freq = samp_rate # sweep frequency FMCW chirp
 
-samp_cw = 2**16 # samples CW block
+samp_cw = 2**17 # samples CW block
 samp_up = 2**17 # samples up-chirp
 samp_down = samp_up # samples down-chirp
 
-r = 20 # range [m]
+r = 100 # range [m]
 v = 10 # velocity [m/s]
 
 freq_cw = 2*v*center_freq/c_light
