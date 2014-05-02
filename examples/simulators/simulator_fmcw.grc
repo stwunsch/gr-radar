@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Fri May  2 14:01:25 2014</timestamp>
+  <timestamp>Fri May  2 16:35:23 2014</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -64,7 +64,7 @@
     <key>variable</key>
     <param>
       <key>id</key>
-      <value>samp_down</value>
+      <value>samp_rate</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -72,11 +72,11 @@
     </param>
     <param>
       <key>value</key>
-      <value>samp_up</value>
+      <value>1000000</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(505, 8)</value>
+      <value>(182, 11)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -87,7 +87,7 @@
     <key>variable</key>
     <param>
       <key>id</key>
-      <value>samp_up</value>
+      <value>center_freq</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -95,11 +95,11 @@
     </param>
     <param>
       <key>value</key>
-      <value>1024</value>
+      <value>1e9</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(396, 9)</value>
+      <value>(13, 82)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -133,7 +133,7 @@
     <key>variable</key>
     <param>
       <key>id</key>
-      <value>samp_rate</value>
+      <value>samp_up</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -141,11 +141,11 @@
     </param>
     <param>
       <key>value</key>
-      <value>4000</value>
+      <value>1024</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(182, 11)</value>
+      <value>(396, 9)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -156,7 +156,7 @@
     <key>variable</key>
     <param>
       <key>id</key>
-      <value>center_freq</value>
+      <value>samp_down</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -164,11 +164,11 @@
     </param>
     <param>
       <key>value</key>
-      <value>1e9</value>
+      <value>samp_up</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(13, 82)</value>
+      <value>(505, 8)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1036,10 +1036,6 @@
     <param>
       <key>center_freq</key>
       <value>center_freq</value>
-    </param>
-    <param>
-      <key>amplitude</key>
-      <value>1</value>
     </param>
     <param>
       <key>len_key</key>

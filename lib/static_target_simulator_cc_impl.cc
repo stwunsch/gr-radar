@@ -371,6 +371,7 @@ namespace gr {
 		d_azimuth = azimuth;
 		d_center_freq = center_freq; // center frequency of simulated hardware for doppler estimation
 		d_samp_rate = samp_rate;
+		d_hold_noutput = -1;
 		
 		// Get num targets
 		d_num_targets = range.size(); // FIXME: throw exceptions for len(range)!=len(velocity)!=...
@@ -423,15 +424,19 @@ namespace gr {
         // Set output to zero
         std::memset(out, 0, noutput_items*sizeof(gr_complex));
         
-        // Set length buffer in loop
-        hold_in.resize(noutput_items);
-        
-        // Setup fft and ifft
-        in_fft.resize(noutput_items);
-        d_fft_plan = fftwf_plan_dft_1d(noutput_items, reinterpret_cast<fftwf_complex *>(&hold_in[0]),
-			reinterpret_cast<fftwf_complex *>(&in_fft[0]), FFTW_FORWARD, FFTW_ESTIMATE);
-		d_ifft_plan = fftwf_plan_dft_1d(noutput_items, reinterpret_cast<fftwf_complex *>(&in_fft[0]),
-			reinterpret_cast<fftwf_complex *>(&hold_in[0]), FFTW_BACKWARD, FFTW_ESTIMATE);
+        if(d_hold_noutput!=noutput_items){
+			// Set length buffer in loop
+			hold_in.resize(noutput_items);
+			
+			// Setup fft and ifft
+			in_fft.resize(noutput_items);
+			d_fft_plan = fftwf_plan_dft_1d(noutput_items, reinterpret_cast<fftwf_complex *>(&hold_in[0]),
+				reinterpret_cast<fftwf_complex *>(&in_fft[0]), FFTW_FORWARD, FFTW_ESTIMATE);
+			d_ifft_plan = fftwf_plan_dft_1d(noutput_items, reinterpret_cast<fftwf_complex *>(&in_fft[0]),
+				reinterpret_cast<fftwf_complex *>(&hold_in[0]), FFTW_BACKWARD, FFTW_ESTIMATE);
+				
+			d_hold_noutput = noutput_items;
+		}
         
         for(int k=0; k<d_num_targets; k++){ // Go through targets
 			// Add doppler shift

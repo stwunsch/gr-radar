@@ -364,6 +364,7 @@ namespace gr {
       std::vector<float> d_range, d_velocity, d_rcs, d_azimuth;
       int d_samp_rate;
       float d_center_freq;
+      int d_hold_noutput;
       
       int d_num_targets;
       std::vector<float> d_doppler, d_scale_ampl, d_timeshift;
