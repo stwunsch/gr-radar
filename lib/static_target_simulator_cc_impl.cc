@@ -346,6 +346,7 @@
 
 #include <gnuradio/io_signature.h>
 #include "static_target_simulator_cc_impl.h"
+#include <volk/volk.h>
 
 namespace gr {
   namespace radar {
@@ -416,8 +417,6 @@ namespace gr {
         gr_complex *in = (gr_complex *) input_items[0]; // remove const
         gr_complex *out = (gr_complex *) output_items[0];
         
-        // FIXME: use volk!
-        
         // Set output items to tagged stream length
         noutput_items = ninput_items[0];
 
@@ -445,11 +444,11 @@ namespace gr {
 				d_phase_doppler = 0;
 				d_phase_time = 0;
 				for(int i=0; i<noutput_items; i++){
-					// Doppler shift filter
-					d_filt_doppler[k][i] = std::exp(d_phase_doppler);
+					// Doppler shift filter with rescaling amplitude with rcs
+					d_filt_doppler[k][i] = std::exp(d_phase_doppler)*d_scale_ampl[k];
 					d_phase_doppler = 1j*std::fmod(std::imag(d_phase_doppler)+2*M_PI*d_doppler[k]/(float)d_samp_rate,2*M_PI); // integrate phase (with plus!)
 					// Time shift filter
-					d_filt_time[k][i] = std::exp(d_phase_time);
+					d_filt_time[k][i] = std::exp(d_phase_time)/(float)noutput_items; // div with noutput_item to correct amplitude after fft->ifft
 					d_phase_time = 1j*std::fmod(std::imag(d_phase_time)-2*M_PI*d_timeshift[k]*(float)d_samp_rate/(float)noutput_items,2*M_PI); // integrate phase (with minus!)
 				}
 			}
@@ -460,15 +459,12 @@ namespace gr {
         
         for(int k=0; k<d_num_targets; k++){ // Go through targets
 			// Add doppler shift
-			for(int i=0; i<noutput_items; i++){
-				d_hold_in[i] = in[i]*d_scale_ampl[k]*d_filt_doppler[k][i]; // add doppler shift with rescaled amplitude
-			}
+			volk_32fc_x2_multiply_32fc(&d_hold_in[0], in, &d_filt_doppler[k][0], noutput_items); // add doppler shift with rescaled amplitude
+			// FIXME: used volk correctly?
 			
 			// Add time shift
 			fftwf_execute(d_fft_plan); // go to freq domain
-			for(int i=0; i<noutput_items; i++){
-				d_in_fft[i] = d_in_fft[i]*d_filt_time[k][i]/(float)noutput_items; // add timeshift with multiply exp-func in freq domain
-			}
+			volk_32fc_x2_multiply_32fc(&d_in_fft[0], &d_in_fft[0], &d_filt_time[k][0], noutput_items); // add timeshift with multiply exp-func in freq domain
 			fftwf_execute(d_ifft_plan); // back in time domain
 			
 			// FIXME: Add azimuth
