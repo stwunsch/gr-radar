@@ -368,7 +368,7 @@ namespace gr {
        * class. radar::static_target_simulator_cc::make is the public interface for
        * creating new instances.
        */
-      static sptr make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, float amplitude, const std::string& len_key="packet_len");
+      static sptr make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, const std::string& len_key="packet_len");
     };
 
   } // namespace radar

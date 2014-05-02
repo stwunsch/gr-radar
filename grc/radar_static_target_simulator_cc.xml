@@ -3,7 +3,7 @@
   <key>radar_static_target_simulator_cc</key>
   <category>RADAR</category>
   <import>import radar</import>
-  <make>radar.static_target_simulator_cc($range, $velocity, $rcs, $azimuth, $samp_rate, $center_freq, $amplitude, $len_key)</make>
+  <make>radar.static_target_simulator_cc($range, $velocity, $rcs, $azimuth, $samp_rate, $center_freq, $len_key)</make>
   <param>
     <name>Range</name>
     <key>range</key>
@@ -32,11 +32,6 @@
   <param>
     <name>Center frequency</name>
     <key>center_freq</key>
-    <type>float</type>
-  </param>
-  <param>
-    <name>Amplitude (input signal)</name>
-    <key>amplitude</key>
     <type>float</type>
   </param>
   <param>

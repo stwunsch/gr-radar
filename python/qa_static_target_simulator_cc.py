@@ -371,7 +371,7 @@ class qa_static_target_simulator_cc (gr_unittest.TestCase):
 		
 		src = radar.signal_generator_cw_c(packet_len,samp_rate,frequency,amplitude)
 		head = blocks.head(8,test_len)
-		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq, amplitude)
+		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq)
 		mult = blocks.multiply_cc()
 		snk = blocks.vector_sink_c()
 		
@@ -409,7 +409,7 @@ class qa_static_target_simulator_cc (gr_unittest.TestCase):
 		
 		src = radar.signal_generator_cw_c(packet_len,samp_rate,frequency,amplitude)
 		head = blocks.head(8,test_len)
-		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq, amplitude)
+		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq)
 		mult = blocks.multiply_cc()
 		snk1 = blocks.vector_sink_c()
 		snk2 = blocks.vector_sink_c()

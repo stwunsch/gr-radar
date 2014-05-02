@@ -351,16 +351,16 @@ namespace gr {
   namespace radar {
 
     static_target_simulator_cc::sptr
-    static_target_simulator_cc::make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, float amplitude, const std::string& len_key)
+    static_target_simulator_cc::make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, const std::string& len_key)
     {
       return gnuradio::get_initial_sptr
-        (new static_target_simulator_cc_impl(range, velocity, rcs, azimuth, samp_rate, center_freq, amplitude, len_key));
+        (new static_target_simulator_cc_impl(range, velocity, rcs, azimuth, samp_rate, center_freq, len_key));
     }
 
     /*
      * The private constructor
      */
-    static_target_simulator_cc_impl::static_target_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, float amplitude, const std::string& len_key)
+    static_target_simulator_cc_impl::static_target_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, const std::string& len_key)
       : gr::tagged_stream_block("static_target_simulator_cc",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(1, 1, sizeof(gr_complex)), len_key)
@@ -371,7 +371,6 @@ namespace gr {
 		d_azimuth = azimuth;
 		d_center_freq = center_freq; // center frequency of simulated hardware for doppler estimation
 		d_samp_rate = samp_rate;
-		d_amplitude = amplitude; // amplitude of incoming signal for amplitude estimation of reflected signal
 		
 		// Get num targets
 		d_num_targets = range.size(); // FIXME: throw exceptions for len(range)!=len(velocity)!=...
@@ -387,7 +386,7 @@ namespace gr {
 		// Get signal amplitude of reflection with free space path loss and rcs (radar equation)
 		d_scale_ampl.resize(d_num_targets);
 		for(int k=0; k<d_num_targets; k++){
-			d_scale_ampl[k] = d_amplitude*c_light/d_center_freq*std::sqrt(d_rcs[k])/std::pow(d_range[k],2)/std::pow(4*M_PI,3.0/2.0); // sqrt of radar equation as amplitude estimation
+			d_scale_ampl[k] = c_light/d_center_freq*std::sqrt(d_rcs[k])/std::pow(d_range[k],2)/std::pow(4*M_PI,3.0/2.0); // sqrt of radar equation as amplitude estimation
 		} // FIXME: is this correct? remove amplitude (look at implementation in work)
 	}
 
@@ -438,7 +437,7 @@ namespace gr {
 			// Add doppler shift
 			d_phase = 0;
 			for(int i=0; i<noutput_items; i++){
-				hold_in[i] = in[i]/d_amplitude*d_scale_ampl[k]*std::exp(d_phase); // add doppler shift with rescaled amplitude // FIXME: in[i]/d_amplitude correct for norm amplitude and rescaling?
+				hold_in[i] = in[i]*d_scale_ampl[k]*std::exp(d_phase); // add doppler shift with rescaled amplitude // FIXME: in[i]/d_amplitude correct for norm amplitude and rescaling?
 				d_phase = 1j*std::fmod(std::imag(d_phase)+2*M_PI*d_doppler[k]/(float)d_samp_rate,2*M_PI); // integrate phase (with plus!)
 			}
 			
