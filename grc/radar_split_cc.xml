@@ -7,12 +7,12 @@
   <param>
     <name>Packet number</name>
     <key>packet_num</key>
-    <type>raw</type>
+    <type>int</type>
   </param>
   <param>
     <name>Packet parts</name>
     <key>packet_parts</key>
-    <type>raw</type>
+    <type>real_vector</type>
   </param>
   <param>
     <name>Packet length key</name>

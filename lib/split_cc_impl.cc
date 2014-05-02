@@ -351,7 +351,7 @@ namespace gr {
   namespace radar {
 
     split_cc::sptr
-    split_cc::make(uint16_t packet_num, const std::vector<uint16_t> packet_parts, const std::string& len_key)
+    split_cc::make(int packet_num, const std::vector<int> packet_parts, const std::string& len_key)
     {
       return gnuradio::get_initial_sptr
         (new split_cc_impl(packet_num, packet_parts, len_key));
@@ -360,7 +360,7 @@ namespace gr {
     /*
      * The private constructor
      */
-    split_cc_impl::split_cc_impl(uint16_t packet_num, const std::vector<uint16_t> packet_parts, const std::string& len_key)
+    split_cc_impl::split_cc_impl(int packet_num, const std::vector<int> packet_parts, const std::string& len_key)
       : gr::tagged_stream_block("split_cc",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(1, 1, sizeof(gr_complex)), len_key)

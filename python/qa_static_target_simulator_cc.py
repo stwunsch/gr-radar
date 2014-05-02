@@ -389,7 +389,54 @@ class qa_static_target_simulator_cc (gr_unittest.TestCase):
 		fft_freq = samp_rate*num/len(fft) # calc freq out of max sample index, works only for frequencies < samp_rate/2!
 		
 		self.assertAlmostEqual(fft_freq,doppler_freq,2) # check if peak in data is doppler peak
-
+		
+	def test_002_t (self):
+		# set up fg
+		test_len = 1024
+		c_light = 3e8
+		
+		packet_len = test_len
+		samp_rate = 2000
+		frequency = (100,100)
+		amplitude = 1
+		
+		R = c_light/2.0/float(samp_rate) # causes shift of one sample
+		Range = (R, R)
+		velocity = (15, 15)
+		rcs = (1e9, 1e9)
+		azimuth = (0, 0)
+		center_freq = 1e9
+		
+		src = radar.signal_generator_cw_c(packet_len,samp_rate,frequency,amplitude)
+		head = blocks.head(8,test_len)
+		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq, amplitude)
+		mult = blocks.multiply_cc()
+		snk1 = blocks.vector_sink_c()
+		snk2 = blocks.vector_sink_c()
+		
+		self.tb.connect(src,head,sim,snk1)
+		self.tb.connect(head,snk2)
+		self.tb.run ()
+		
+		# check data on mean value around zero
+		data = snk1.data()
+		data_abs = [0]*len(data)
+		for k in range(len(data)):
+			data_abs[k] = abs(data[k])
+		
+		self.assertLess(np.mean(data_abs),0.1)
+		
+		# check data on correct timeshift
+		ref_data = snk2.data()
+		sim_data = [0]*len(ref_data)
+		phase = 0
+		freq_doppler = 2*velocity[0]*center_freq/c_light
+		for k in range(len(ref_data)): # add doppler freq
+			sim_data[k] = ref_data[k]*np.exp(1j*phase)*c_light/center_freq*np.sqrt(rcs[0])/pow(Range[0],2)/pow(4*np.pi,3.0/2.0)
+			phase = phase + 2*np.pi*freq_doppler/samp_rate
+			
+		self.assertComplexTuplesAlmostEqual(data[0:len(ref_data)-2],sim_data[1:len(sim_data)-1],4) # check if simulator gives same samples as signal shifted with one sample
+		
 
 if __name__ == '__main__':
 	gr_unittest.run(qa_static_target_simulator_cc)#, "qa_static_target_simulator_cc.xml")

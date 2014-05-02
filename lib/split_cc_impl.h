@@ -357,11 +357,11 @@ namespace gr {
       int calculate_output_stream_length(const gr_vector_int &ninput_items);
 
      public:
-      split_cc_impl(uint16_t packet_num, const std::vector<uint16_t> packet_parts, const std::string& len_key);
+      split_cc_impl(int packet_num, const std::vector<int> packet_parts, const std::string& len_key);
       ~split_cc_impl();
       
       int d_packet_num, d_offset;
-      std::vector<uint16_t> d_packet_parts;
+      std::vector<int> d_packet_parts;
 
       // Where all the action really happens
       int work(int noutput_items,

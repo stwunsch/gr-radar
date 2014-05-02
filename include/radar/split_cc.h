@@ -368,7 +368,7 @@ namespace gr {
        * class. radar::split_cc::make is the public interface for
        * creating new instances.
        */
-      static sptr make(uint16_t packet_num, const std::vector<uint16_t> packet_parts, const std::string& len_key="packet_len");
+      static sptr make(int packet_num, const std::vector<int> packet_parts, const std::string& len_key="packet_len");
     };
 
   } // namespace radar

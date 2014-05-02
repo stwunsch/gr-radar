@@ -344,6 +344,7 @@
 #define INCLUDED_RADAR_STATIC_TARGET_SIMULATOR_CC_IMPL_H
 
 #include <radar/static_target_simulator_cc.h>
+#include <fftw3.h>
 
 namespace gr {
   namespace radar {
@@ -365,10 +366,13 @@ namespace gr {
       float d_center_freq, d_amplitude;
       
       int d_num_targets;
-      std::vector<float> d_doppler, d_scale_ampl;
+      std::vector<float> d_doppler, d_scale_ampl, d_timeshift;
       gr_complex d_phase;
       std::vector<gr_complex> hold_in;
       
+      fftwf_plan d_fft_plan, d_ifft_plan;
+      std::vector<gr_complex> in_fft;
+           
       const static float c_light = 3e8;
 
       // Where all the action really happens

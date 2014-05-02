@@ -380,11 +380,15 @@ namespace gr {
 		d_doppler.resize(d_num_targets);
 		for(int k=0; k<d_num_targets; k++) d_doppler[k] = 2*d_velocity[k]*d_center_freq/c_light;
 		
+		// Get timeshifts
+		d_timeshift.resize(d_num_targets);
+		for(int k=0; k<d_num_targets; k++) d_timeshift[k] = 2*d_range[k]/c_light;
+		
 		// Get signal amplitude of reflection with free space path loss and rcs (radar equation)
 		d_scale_ampl.resize(d_num_targets);
 		for(int k=0; k<d_num_targets; k++){
 			d_scale_ampl[k] = d_amplitude*c_light/d_center_freq*std::sqrt(d_rcs[k])/std::pow(d_range[k],2)/std::pow(4*M_PI,3.0/2.0); // sqrt of radar equation as amplitude estimation
-		} // FIXME: is this correct?
+		} // FIXME: is this correct? remove amplitude (look at implementation in work)
 	}
 
     /*
@@ -407,10 +411,10 @@ namespace gr {
                        gr_vector_const_void_star &input_items,
                        gr_vector_void_star &output_items)
     {
-        const gr_complex *in = (const gr_complex *) input_items[0];
+        gr_complex *in = (gr_complex *) input_items[0]; // remove const
         gr_complex *out = (gr_complex *) output_items[0];
         
-        // FIXME: use volk?
+        // FIXME: use volk!
         
         // Set output items to tagged stream length
         noutput_items = ninput_items[0];
@@ -420,18 +424,32 @@ namespace gr {
         // Set output to zero
         std::memset(out, 0, noutput_items*sizeof(gr_complex));
         
-        // Set length buffer
+        // Set length buffer in loop
         hold_in.resize(noutput_items);
+        
+        // Setup fft and ifft
+        in_fft.resize(noutput_items);
+        d_fft_plan = fftwf_plan_dft_1d(noutput_items, reinterpret_cast<fftwf_complex *>(&hold_in[0]),
+			reinterpret_cast<fftwf_complex *>(&in_fft[0]), FFTW_FORWARD, FFTW_ESTIMATE);
+		d_ifft_plan = fftwf_plan_dft_1d(noutput_items, reinterpret_cast<fftwf_complex *>(&in_fft[0]),
+			reinterpret_cast<fftwf_complex *>(&hold_in[0]), FFTW_BACKWARD, FFTW_ESTIMATE);
         
         for(int k=0; k<d_num_targets; k++){ // Go through targets
 			// Add doppler shift
 			d_phase = 0;
 			for(int i=0; i<noutput_items; i++){
 				hold_in[i] = in[i]/d_amplitude*d_scale_ampl[k]*std::exp(d_phase); // add doppler shift with rescaled amplitude // FIXME: in[i]/d_amplitude correct for norm amplitude and rescaling?
-				d_phase = 1j*std::fmod(std::imag(d_phase)+2*M_PI*d_doppler[k]/(float)d_samp_rate,2*M_PI); // integrate phase
+				d_phase = 1j*std::fmod(std::imag(d_phase)+2*M_PI*d_doppler[k]/(float)d_samp_rate,2*M_PI); // integrate phase (with plus!)
 			}
 			
-			// FIXME: Add time shift
+			// Add time shift
+			fftwf_execute(d_fft_plan); // go to freq domain
+			d_phase = 0;
+			for(int i=0; i<noutput_items; i++){
+				in_fft[i] = in_fft[i]*std::exp(d_phase)/(float)noutput_items; // add timeshift with multiply exp-func in freq domain
+				d_phase = 1j*std::fmod(std::imag(d_phase)-2*M_PI*d_timeshift[k]*(float)d_samp_rate/(float)noutput_items,2*M_PI); // integrate phase (with minus!)
+			}
+			fftwf_execute(d_ifft_plan); // back in time domain
 			
 			// FIXME: Add azimuth
 			
