@@ -362,6 +362,8 @@ namespace gr {
       ~ts_fft_cc_impl();
       
       fftwf_plan d_fft_plan;
+      std::vector<gr_complex> d_buffer;
+      int d_hold_noutput_items;
 
       // Where all the action really happens
       int work(int noutput_items,

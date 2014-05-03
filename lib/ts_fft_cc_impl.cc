@@ -364,7 +364,9 @@ namespace gr {
       : gr::tagged_stream_block("ts_fft_cc",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(1, 1, sizeof(gr_complex)), len_key)
-    {}
+    {
+		d_hold_noutput_items = -1;
+	}
 
     /*
      * Our virtual destructor.
@@ -392,12 +394,26 @@ namespace gr {
         // Do <+signal processing+>
         
         // Set output to one packet (defined with tagged stream)
-        noutput_items = ninput_items[0];
+		noutput_items = ninput_items[0];
+        
+        // Check if actual plan and output_items are correct
+        if(noutput_items!=d_hold_noutput_items){
+			d_hold_noutput_items = noutput_items;
+			// Resize buffer
+			d_buffer.resize(noutput_items);
+			// Setup plan
+			d_fft_plan = fftwf_plan_dft_1d(noutput_items, reinterpret_cast<fftwf_complex *>(&d_buffer[0]),
+			reinterpret_cast<fftwf_complex *>(&d_buffer[0]), FFTW_FORWARD, FFTW_ESTIMATE);
+		}
+        
+        // Fill buffer from input
+        memcpy(&d_buffer[0], in, sizeof(gr_complex)*noutput_items);
         
         // Execute fft plan
-        d_fft_plan = fftwf_plan_dft_1d(noutput_items, reinterpret_cast<fftwf_complex *>(in),
-			reinterpret_cast<fftwf_complex *>(out), FFTW_FORWARD, FFTW_ESTIMATE);
 		fftwf_execute(d_fft_plan);
+		
+		// Push items to output
+		memcpy(out, &d_buffer[0], sizeof(gr_complex)*noutput_items);
 
         // Tell runtime system how many output items we produced.
         return noutput_items;

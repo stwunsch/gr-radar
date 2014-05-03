@@ -396,7 +396,7 @@ class qa_split_fsk_cc (gr_unittest.TestCase):
 			data1.append(data[k])
 			k = k+1
 		
-		# check if data is same as split from block
+		# check if data0/1 is same as split from block
 		self.assertComplexTuplesAlmostEqual(data0,snk0.data(),10)
 		self.assertComplexTuplesAlmostEqual(data1,snk1.data(),10)
 			
