@@ -25,5 +25,6 @@ install(FILES
     radar_estimator_cw.xml
     radar_print_results.xml
     radar_static_target_simulator_cc.xml
-    radar_print_peaks.xml DESTINATION share/gnuradio/grc/blocks
+    radar_print_peaks.xml
+    radar_signal_generator_fsk_c.xml DESTINATION share/gnuradio/grc/blocks
 )

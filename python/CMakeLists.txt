@@ -48,3 +48,4 @@ GR_ADD_TEST(qa_os_cfar_c ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_os_
 GR_ADD_TEST(qa_ts_fft_cc ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_ts_fft_cc.py)
 GR_ADD_TEST(qa_estimator_cw ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_estimator_cw.py)
 GR_ADD_TEST(qa_static_target_simulator_cc ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_static_target_simulator_cc.py)
+GR_ADD_TEST(qa_signal_generator_fsk_c ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_signal_generator_fsk_c.py)
