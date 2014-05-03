@@ -449,7 +449,7 @@ namespace gr {
 					d_phase_doppler = 1j*std::fmod(std::imag(d_phase_doppler)+2*M_PI*d_doppler[k]/(float)d_samp_rate,2*M_PI); // integrate phase (with plus!)
 					// Time shift filter
 					d_filt_time[k][i] = std::exp(d_phase_time)/(float)noutput_items; // div with noutput_item to correct amplitude after fft->ifft
-					d_phase_time = 1j*std::fmod(std::imag(d_phase_time)-2*M_PI*d_timeshift[k]*(float)d_samp_rate/(float)noutput_items,2*M_PI); // integrate phase (with minus!)
+					d_phase_time = 1j*std::fmod(std::imag(d_phase_time)+2*M_PI*d_timeshift[k]*(float)d_samp_rate/(float)noutput_items,2*M_PI); // integrate phase (with plus!)
 				}
 			}
 			
@@ -457,7 +457,8 @@ namespace gr {
 			d_hold_noutput = noutput_items;
 		}
         
-        for(int k=0; k<d_num_targets; k++){ // Go through targets
+        // Go through targets and apply filters
+        for(int k=0; k<d_num_targets; k++){
 			// Add doppler shift
 			volk_32fc_x2_multiply_32fc(&d_hold_in[0], in, &d_filt_doppler[k][0], noutput_items); // add doppler shift with rescaled amplitude
 			// FIXME: used volk correctly?

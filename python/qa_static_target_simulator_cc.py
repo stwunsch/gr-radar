@@ -341,7 +341,7 @@
 # Public License instead of this License.
 
 from gnuradio import gr, gr_unittest
-from gnuradio import blocks
+from gnuradio import blocks, analog
 import radar_swig as radar
 import numpy as np
 import numpy.fft
@@ -390,53 +390,41 @@ class qa_static_target_simulator_cc (gr_unittest.TestCase):
 		
 		self.assertAlmostEqual(fft_freq,doppler_freq,2) # check if peak in data is doppler peak
 		
+		
 	def test_002_t (self):
 		# set up fg
-		test_len = 1024
+		test_len = 1000
+		packet_len = 1000
 		c_light = 3e8
 		
-		packet_len = test_len
-		samp_rate = 2000
-		frequency = (100,100)
-		amplitude = 1
+		samp_rate = 1000
+		freq = 5
+		ampl = 1
 		
-		R = c_light/2/float(samp_rate) # causes shift of one sample
+		R = c_light/2/samp_rate # shift of 1 sample
+		rcs = 1e12
 		Range = (R, R)
-		velocity = (15, 15)
-		rcs = (1e9, 1e9)
+		velocity = (0, 0) # no freq shift
+		rcs = (rcs, rcs)
 		azimuth = (0, 0)
 		center_freq = 1e9
 		
-		src = radar.signal_generator_cw_c(packet_len,samp_rate,frequency,amplitude)
+		src = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, freq, ampl)
 		head = blocks.head(8,test_len)
+		s2ts = blocks.stream_to_tagged_stream(8,1,packet_len,"packet_len")
 		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq)
-		mult = blocks.multiply_cc()
+		snk0 = blocks.vector_sink_c()
 		snk1 = blocks.vector_sink_c()
-		snk2 = blocks.vector_sink_c()
 		
-		self.tb.connect(src,head,sim,snk1)
-		self.tb.connect(head,snk2)
-		self.tb.run ()
+		self.tb.connect(src,head,s2ts,sim,snk0)
+		self.tb.connect(head,snk1)
+		self.tb.run()
 		
-		# check data on mean value around zero
-		data = snk1.data()
-		data_abs = [0]*len(data)
-		for k in range(len(data)):
-			data_abs[k] = abs(data[k])
-		
-		self.assertLess(np.mean(data_abs),0.1)
-		
-		# check data on correct timeshift
-		ref_data = snk2.data()
-		sim_data = [0]*len(ref_data)
-		phase = 0
-		freq_doppler = 2*velocity[0]*center_freq/c_light
-		for k in range(len(ref_data)): # add doppler freq
-			sim_data[k] = ref_data[k]*np.exp(1j*phase)*c_light/center_freq*np.sqrt(rcs[0])/pow(Range[0],2)/pow(4*np.pi,3.0/2.0)
-			phase = phase + 2*np.pi*freq_doppler/samp_rate
-			
-		self.assertComplexTuplesAlmostEqual(data[0:len(ref_data)-2],sim_data[1:len(sim_data)-1],6) # check if simulator gives same samples as signal shifted with one sample
-		
+		# check data with shifting of 1 sample
+		data_in = snk1.data()
+		data_out = snk0.data()
+		data_out = data_out/max(np.real(data_out)) # rescale output data
+		self.assertComplexTuplesAlmostEqual(data_out[0:len(data_out)-2],data_in[1:len(data_in)-1],4)
 
 if __name__ == '__main__':
 	gr_unittest.run(qa_static_target_simulator_cc)#, "qa_static_target_simulator_cc.xml")
