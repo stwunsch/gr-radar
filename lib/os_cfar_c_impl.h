@@ -364,10 +364,10 @@ namespace gr {
       float d_rel_threshold, d_mult_threshold;
       bool d_merge_consecutive, d_consecutive;
       
-      std::vector<float> d_pks, d_freq, d_hold_samp;
+      std::vector<float> d_pks, d_freq, d_angle, d_hold_samp;
       
       pmt::pmt_t d_port_id;
-      pmt::pmt_t d_ptimestamp,d_pfreq,d_ppks,d_value;
+      pmt::pmt_t d_ptimestamp,d_pfreq,d_ppks,d_pangle,d_value;
 
       // Where all the action really happens
       int work(int noutput_items,

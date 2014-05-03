@@ -406,6 +406,7 @@ namespace gr {
         // OS-CFAR detection
         d_freq.clear();
         d_pks.clear();
+        d_angle.clear();
 		
         for(int k=0; k<ninput_items[0]; k++){ // go through input
 			d_hold_samp.clear();
@@ -426,20 +427,23 @@ namespace gr {
 			std::sort(d_hold_samp.begin(),d_hold_samp.end()); // sort sample vector
 			
 			if(std::pow(std::abs(in[k]),2)>d_hold_samp[(int)((2*d_samp_compare-1)*d_rel_threshold)]*d_mult_threshold){ // check if in[k] is over dynamic threshold multiplied with mult_threshold
-				// Add peaks and frequencies
+				// Add peaks, frequencies and angle
 				if(k<=ninput_items[0]/2) d_freq.push_back(k*d_samp_rate/(float)ninput_items[0]); // add frequency to message vector d_freq
 				else d_freq.push_back(-(float)d_samp_rate+k*d_samp_rate/(float)ninput_items[0]);
 				d_pks.push_back(pow(abs(in[k]),2)); // add abs-square to message vector d_pks
+				d_angle.push_back(std::arg(in[k])); // add angle to message vector d_angle
 				
 				// Merge consecutive peaks
 				if( (d_merge_consecutive && d_consecutive) && d_freq.size()>1){
 					if(d_pks[d_pks.size()-2]<d_pks[d_pks.size()-1]){ // if last peak is lower, remove last one
 						d_pks.erase(d_pks.end()-2); // vec.end() points past the end!
 						d_freq.erase(d_freq.end()-2);
+						d_angle.erase(d_angle.end()-2);
 					}
 					else{ // if last peak is higher, remove actual one
 						d_pks.erase(d_pks.end()-1);
 						d_freq.erase(d_freq.end()-1);
+						d_angle.erase(d_angle.end()-1);
 					}
 				}
 				
@@ -455,7 +459,8 @@ namespace gr {
 		d_ptimestamp = pmt::from_long(0); // FIXME: better timestamp!
 		d_pfreq = pmt::init_f32vector(d_freq.size(),d_freq);
 		d_ppks = pmt::init_f32vector(d_pks.size(),d_pks);
-		d_value = pmt::list3(d_ptimestamp,d_pfreq,d_ppks);
+		d_pangle = pmt::init_f32vector(d_angle.size(),d_angle);
+		d_value = pmt::list4(d_ptimestamp,d_pfreq,d_ppks,d_pangle);
 		
 		// publish message
 		message_port_pub(d_port_id,d_value);

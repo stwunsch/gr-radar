@@ -400,7 +400,7 @@ class qa_static_target_simulator_cc (gr_unittest.TestCase):
 		frequency = (100,100)
 		amplitude = 1
 		
-		R = c_light/2.0/float(samp_rate) # causes shift of one sample
+		R = c_light/2/float(samp_rate) # causes shift of one sample
 		Range = (R, R)
 		velocity = (15, 15)
 		rcs = (1e9, 1e9)
@@ -435,7 +435,7 @@ class qa_static_target_simulator_cc (gr_unittest.TestCase):
 			sim_data[k] = ref_data[k]*np.exp(1j*phase)*c_light/center_freq*np.sqrt(rcs[0])/pow(Range[0],2)/pow(4*np.pi,3.0/2.0)
 			phase = phase + 2*np.pi*freq_doppler/samp_rate
 			
-		self.assertComplexTuplesAlmostEqual(data[0:len(ref_data)-2],sim_data[1:len(sim_data)-1],4) # check if simulator gives same samples as signal shifted with one sample
+		self.assertComplexTuplesAlmostEqual(data[0:len(ref_data)-2],sim_data[1:len(sim_data)-1],6) # check if simulator gives same samples as signal shifted with one sample
 		
 
 if __name__ == '__main__':
