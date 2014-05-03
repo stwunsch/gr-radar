@@ -32,7 +32,8 @@ list(APPEND radar_sources
     ts_fft_cc_impl.cc
     estimator_cw_impl.cc
     print_results_impl.cc
-    static_target_simulator_cc_impl.cc )
+    static_target_simulator_cc_impl.cc
+    print_peaks_impl.cc )
 
 set(radar_sources "${radar_sources}" PARENT_SCOPE)
 if(NOT radar_sources)

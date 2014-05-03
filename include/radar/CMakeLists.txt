@@ -29,5 +29,6 @@ install(FILES
     ts_fft_cc.h
     estimator_cw.h
     print_results.h
-    static_target_simulator_cc.h DESTINATION include/radar
+    static_target_simulator_cc.h
+    print_peaks.h DESTINATION include/radar
 )

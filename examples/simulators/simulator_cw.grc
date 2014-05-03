@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Fri May  2 20:22:41 2014</timestamp>
+  <timestamp>Sat May  3 08:51:18 2014</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -196,64 +196,6 @@
     <param>
       <key>_rotation</key>
       <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>radar_estimator_cw</key>
-    <param>
-      <key>id</key>
-      <value>radar_estimator_cw_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>center_freq</key>
-      <value>center_freq</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(312, 647)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
-    </param>
-  </block>
-  <block>
-    <key>radar_print_results</key>
-    <param>
-      <key>id</key>
-      <value>radar_print_results_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(79, 651)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
     </param>
   </block>
   <block>
@@ -928,6 +870,87 @@
       <value>180</value>
     </param>
   </block>
+  <block>
+    <key>radar_estimator_cw</key>
+    <param>
+      <key>id</key>
+      <value>radar_estimator_cw_0</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>center_freq</key>
+      <value>center_freq</value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(312, 647)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+  </block>
+  <block>
+    <key>radar_print_results</key>
+    <param>
+      <key>id</key>
+      <value>radar_print_results_0</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(79, 651)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+  </block>
+  <block>
+    <key>radar_print_peaks</key>
+    <param>
+      <key>id</key>
+      <value>radar_print_peaks_0</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(77, 451)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+  </block>
   <connection>
     <source_block_id>blocks_add_xx_0</source_block_id>
     <sink_block_id>blocks_multiply_xx_0</sink_block_id>
@@ -1011,5 +1034,11 @@
     <sink_block_id>wxgui_fftsink2_0_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>radar_os_cfar_c_0</source_block_id>
+    <sink_block_id>radar_print_peaks_0</sink_block_id>
+    <source_key>Msg out</source_key>
+    <sink_key>Msg in</sink_key>
   </connection>
 </flow_graph>
