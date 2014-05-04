@@ -340,68 +340,43 @@
  * Public License instead of this License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#ifndef INCLUDED_RADAR_ESTIMATOR_FSK_IMPL_H
+#define INCLUDED_RADAR_ESTIMATOR_FSK_IMPL_H
 
-#include <gnuradio/io_signature.h>
-#include "print_results_impl.h"
-#include <iostream>
+#include <radar/estimator_fsk.h>
 
 namespace gr {
   namespace radar {
 
-    print_results::sptr
-    print_results::make()
+    class estimator_fsk_impl : public estimator_fsk
     {
-      return gnuradio::get_initial_sptr
-        (new print_results_impl());
-    }
+     private:
+      // Nothing to declare in this block.
 
-    /*
-     * The private constructor
-     */
-    print_results_impl::print_results_impl()
-      : gr::block("print_results",
-              gr::io_signature::make(0,0,0),
-              gr::io_signature::make(0,0,0))
-    {
-		// Register input message port
-		d_port_id_in = pmt::mp("Msg in");
-		message_port_register_in(d_port_id_in);
-		set_msg_handler(d_port_id_in, boost::bind(&print_results_impl::handle_msg, this, _1));
-	}
+     public:
+      estimator_fsk_impl(float center_freq, float delta_freq);
+      ~estimator_fsk_impl();
+      void handle_msg(pmt::pmt_t msg);
+      
+      float d_center_freq, d_delta_freq;
+      pmt::pmt_t d_port_id_in, d_port_id_out;
+      
+      int d_timestamp;
+      std::vector<float> d_freq, d_pks, d_phase;
+	  pmt::pmt_t d_ptimestamp, d_pfreq, d_ppks, d_pphase;
+	  
+	  std::vector<float> d_vel;
+	  pmt::pmt_t d_value;
+	  pmt::pmt_t d_vel_key, d_vel_value, d_vel_pack;
+	  std::vector<float> d_range;
+	  pmt::pmt_t d_range_key, d_range_value, d_range_pack;
+      
+      const static float c_light = 3e8;
+      
+    };
 
-    /*
-     * Our virtual destructor.
-     */
-    print_results_impl::~print_results_impl()
-    {
-    }
-    
-    void
-    print_results_impl::handle_msg(pmt::pmt_t msg)
-    {
-		std::cout << "// Print results" << std::endl;
-		// Get size of pmt list
-		d_size_msg = pmt::length(msg);
-		for(int k=0; k<d_size_msg; k++){
-			d_msg_part = pmt::nth(k,msg);
-			d_size_part = pmt::length(pmt::nth(1,d_msg_part));
-			// Print identifier (which information)
-			std::cout << pmt::symbol_to_string(pmt::nth(0,d_msg_part)) << ": ";
-			// Print information, every datatype needs an if-statement!
-			if(pmt::is_f32vector(pmt::nth(1,d_msg_part))){
-				for(int l=0; l<d_size_part; l++) std::cout << pmt::f32vector_elements(pmt::nth(1,d_msg_part),d_size_part)[l] << " ";
-			}
-			else{
-				std::cout << "Can not identify data type.";
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-	}
+  } // namespace radar
+} // namespace gr
 
-  } /* namespace radar */
-} /* namespace gr */
+#endif /* INCLUDED_RADAR_ESTIMATOR_FSK_IMPL_H */
 

@@ -32,5 +32,6 @@ install(FILES
     static_target_simulator_cc.h
     print_peaks.h
     signal_generator_fsk_c.h
-    split_fsk_cc.h DESTINATION include/radar
+    split_fsk_cc.h
+    estimator_fsk.h DESTINATION include/radar
 )

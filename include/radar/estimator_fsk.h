@@ -340,68 +340,39 @@
  * Public License instead of this License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
-#include <gnuradio/io_signature.h>
-#include "print_results_impl.h"
-#include <iostream>
+#ifndef INCLUDED_RADAR_ESTIMATOR_FSK_H
+#define INCLUDED_RADAR_ESTIMATOR_FSK_H
+
+#include <radar/api.h>
+#include <gnuradio/block.h>
 
 namespace gr {
   namespace radar {
 
-    print_results::sptr
-    print_results::make()
-    {
-      return gnuradio::get_initial_sptr
-        (new print_results_impl());
-    }
-
-    /*
-     * The private constructor
+    /*!
+     * \brief <+description of block+>
+     * \ingroup radar
+     *
      */
-    print_results_impl::print_results_impl()
-      : gr::block("print_results",
-              gr::io_signature::make(0,0,0),
-              gr::io_signature::make(0,0,0))
+    class RADAR_API estimator_fsk : virtual public gr::block
     {
-		// Register input message port
-		d_port_id_in = pmt::mp("Msg in");
-		message_port_register_in(d_port_id_in);
-		set_msg_handler(d_port_id_in, boost::bind(&print_results_impl::handle_msg, this, _1));
-	}
+     public:
+      typedef boost::shared_ptr<estimator_fsk> sptr;
 
-    /*
-     * Our virtual destructor.
-     */
-    print_results_impl::~print_results_impl()
-    {
-    }
-    
-    void
-    print_results_impl::handle_msg(pmt::pmt_t msg)
-    {
-		std::cout << "// Print results" << std::endl;
-		// Get size of pmt list
-		d_size_msg = pmt::length(msg);
-		for(int k=0; k<d_size_msg; k++){
-			d_msg_part = pmt::nth(k,msg);
-			d_size_part = pmt::length(pmt::nth(1,d_msg_part));
-			// Print identifier (which information)
-			std::cout << pmt::symbol_to_string(pmt::nth(0,d_msg_part)) << ": ";
-			// Print information, every datatype needs an if-statement!
-			if(pmt::is_f32vector(pmt::nth(1,d_msg_part))){
-				for(int l=0; l<d_size_part; l++) std::cout << pmt::f32vector_elements(pmt::nth(1,d_msg_part),d_size_part)[l] << " ";
-			}
-			else{
-				std::cout << "Can not identify data type.";
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-	}
+      /*!
+       * \brief Return a shared_ptr to a new instance of radar::estimator_fsk.
+       *
+       * To avoid accidental use of raw pointers, radar::estimator_fsk's
+       * constructor is in a private implementation
+       * class. radar::estimator_fsk::make is the public interface for
+       * creating new instances.
+       */
+      static sptr make(float center_freq, float delta_freq);
+    };
 
-  } /* namespace radar */
-} /* namespace gr */
+  } // namespace radar
+} // namespace gr
+
+#endif /* INCLUDED_RADAR_ESTIMATOR_FSK_H */
 
