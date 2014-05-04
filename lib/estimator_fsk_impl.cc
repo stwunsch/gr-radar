@@ -408,7 +408,7 @@ namespace gr {
 		// Calc ranges and write to vector
 		d_range.clear();
 		for(int k=0; k<d_phase.size(); k++){
-			d_range.push_back(-d_phase[k]*c_light/8/M_PI/d_delta_freq); // calc with fsk range formula
+			d_range.push_back((M_PI+d_phase[k])*c_light/4/M_PI/d_delta_freq); // calc with fsk range formula
 		}
 		
 		// Push pmt to output msg port
