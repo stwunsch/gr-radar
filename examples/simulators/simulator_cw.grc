@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Sun May  4 12:16:24 2014</timestamp>
+  <timestamp>Mon May  5 19:32:14 2014</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -391,6 +391,10 @@
     <param>
       <key>_enabled</key>
       <value>True</value>
+    </param>
+    <param>
+      <key>apply_filter</key>
+      <value>0</value>
     </param>
     <param>
       <key>len_key</key>
