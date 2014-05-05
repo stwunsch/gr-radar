@@ -346,25 +346,27 @@
 
 #include <gnuradio/io_signature.h>
 #include "ts_fft_cc_impl.h"
+#include <volk/volk.h>
 
 namespace gr {
   namespace radar {
 
     ts_fft_cc::sptr
-    ts_fft_cc::make(const std::string& len_key)
+    ts_fft_cc::make(int apply_filter, const std::string& len_key)
     {
       return gnuradio::get_initial_sptr
-        (new ts_fft_cc_impl(len_key));
+        (new ts_fft_cc_impl(apply_filter, len_key));
     }
 
     /*
      * The private constructor
      */
-    ts_fft_cc_impl::ts_fft_cc_impl(const std::string& len_key)
+    ts_fft_cc_impl::ts_fft_cc_impl(int apply_filter, const std::string& len_key)
       : gr::tagged_stream_block("ts_fft_cc",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(1, 1, sizeof(gr_complex)), len_key)
     {
+		d_apply_filter = apply_filter;
 		d_hold_noutput_items = -1;
 	}
 
@@ -398,7 +400,12 @@ namespace gr {
         
         // Check if actual plan and output_items are correct
         if(noutput_items!=d_hold_noutput_items){
+			// Setup new noutput_items
 			d_hold_noutput_items = noutput_items;
+			// Setup filter (Hamming window)
+			d_filter.resize(noutput_items);
+			for(int k=0; k<noutput_items/2; k++) d_filter[k] = 0.54+0.46*std::cos(2*M_PI*k/noutput_items); // filter for IQ signal correct this way?
+			for(int k=noutput_items/2; k<noutput_items; k++) d_filter[k] = 0.54+0.46*std::cos(-2*M_PI*k/noutput_items);
 			// Resize buffer
 			d_buffer.resize(noutput_items);
 			// Setup plan
@@ -406,8 +413,13 @@ namespace gr {
 			reinterpret_cast<fftwf_complex *>(&d_buffer[0]), FFTW_FORWARD, FFTW_ESTIMATE);
 		}
         
-        // Fill buffer from input
-        memcpy(&d_buffer[0], in, sizeof(gr_complex)*noutput_items);
+        // Fill buffer from input and apply filter
+        if(d_apply_filter){
+			volk_32fc_x2_multiply_32fc(&d_buffer[0], in, &d_filter[0], noutput_items);
+		}
+		else{
+			memcpy(&d_buffer[0], in, sizeof(gr_complex)*noutput_items);
+		}
         
         // Execute fft plan
 		fftwf_execute(d_fft_plan);
