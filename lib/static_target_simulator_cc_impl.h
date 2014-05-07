@@ -375,6 +375,8 @@ namespace gr {
       fftwf_plan d_fft_plan, d_ifft_plan;
       std::vector<gr_complex> d_in_fft;
       std::vector<std::vector<gr_complex> > d_filt_doppler, d_filt_time, d_filt_phase;
+      
+      pmt::pmt_t d_key, d_val, d_srcid;
            
       const static float c_light = 3e8;
 

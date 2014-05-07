@@ -375,6 +375,10 @@ namespace gr {
 		d_hold_noutput = -1;
 		d_rndm_phaseshift = rndm_phaseshift;
 		
+		// Setup rx_time tag
+		d_key = pmt::string_to_symbol("rx_time");
+		d_srcid = pmt::string_to_symbol("stat_targ_sim");
+		
 		// Get num targets
 		d_num_targets = range.size(); // FIXME: throw exceptions for len(range)!=len(velocity)!=...
 		
@@ -430,6 +434,12 @@ namespace gr {
         noutput_items = ninput_items[0];
 
         // Do <+signal processing+>
+        
+        // Set rx_time tag
+        d_val = pmt::make_tuple
+            (pmt::from_uint64((uint64_t)time(NULL)),
+             pmt::from_double(0)); // FIXME: add fractional second, correct implementation?
+        add_item_tag(0, nitems_written(0), d_key, d_val, d_srcid);
         
         // Set output to zero
         std::memset(out, 0, noutput_items*sizeof(gr_complex));
