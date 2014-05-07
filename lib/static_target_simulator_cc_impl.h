@@ -358,13 +358,14 @@ namespace gr {
       int calculate_output_stream_length(const gr_vector_int &ninput_items);
 
      public:
-      static_target_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, const std::string& len_key);
+      static_target_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, bool rndm_phaseshift, const std::string& len_key);
       ~static_target_simulator_cc_impl();
       
       std::vector<float> d_range, d_velocity, d_rcs, d_azimuth;
       int d_samp_rate;
       float d_center_freq;
       int d_hold_noutput;
+      bool d_rndm_phaseshift;
       
       int d_num_targets;
       std::vector<float> d_doppler, d_scale_ampl, d_timeshift;

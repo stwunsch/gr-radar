@@ -352,16 +352,16 @@ namespace gr {
   namespace radar {
 
     static_target_simulator_cc::sptr
-    static_target_simulator_cc::make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, const std::string& len_key)
+    static_target_simulator_cc::make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, bool rndm_phaseshift, const std::string& len_key)
     {
       return gnuradio::get_initial_sptr
-        (new static_target_simulator_cc_impl(range, velocity, rcs, azimuth, samp_rate, center_freq, len_key));
+        (new static_target_simulator_cc_impl(range, velocity, rcs, azimuth, samp_rate, center_freq, rndm_phaseshift, len_key));
     }
 
     /*
      * The private constructor
      */
-    static_target_simulator_cc_impl::static_target_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, const std::string& len_key)
+    static_target_simulator_cc_impl::static_target_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, bool rndm_phaseshift, const std::string& len_key)
       : gr::tagged_stream_block("static_target_simulator_cc",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(1, 1, sizeof(gr_complex)), len_key)
@@ -373,6 +373,7 @@ namespace gr {
 		d_center_freq = center_freq; // center frequency of simulated hardware for doppler estimation
 		d_samp_rate = samp_rate;
 		d_hold_noutput = -1;
+		d_rndm_phaseshift = rndm_phaseshift;
 		
 		// Get num targets
 		d_num_targets = range.size(); // FIXME: throw exceptions for len(range)!=len(velocity)!=...
@@ -393,11 +394,13 @@ namespace gr {
 			d_scale_ampl[k] = c_light/d_center_freq*std::sqrt(d_rcs[k])/std::pow(d_range[k],2)/std::pow(4*M_PI,3.0/2.0); // sqrt of radar equation as amplitude estimation
 		} // FIXME: is this correct? remove amplitude (look at implementation in work)
 		
-		// Resize phase shift filter
-		d_filt_phase.resize(d_num_targets);
-		
-		// Setup random numbers
-		std::srand(std::time(NULL)); // initial with time
+		if(d_rndm_phaseshift){
+			// Resize phase shift filter
+			d_filt_phase.resize(d_num_targets);
+			
+			// Setup random numbers
+			std::srand(std::time(NULL)); // initial with time
+		}
 	}
 
     /*
@@ -447,7 +450,7 @@ namespace gr {
 			for(int k=0; k<d_num_targets; k++){
 				d_filt_doppler[k].resize(noutput_items);
 				d_filt_time[k].resize(noutput_items);
-				d_filt_phase[k].resize(noutput_items);
+				if(d_rndm_phaseshift) d_filt_phase[k].resize(noutput_items);
 				d_phase_doppler = 0;
 				d_phase_time = 0;
 				for(int i=0; i<noutput_items; i++){
@@ -465,9 +468,11 @@ namespace gr {
 		}
 		
 		// Setup random phase shift
-        for(int k=0; k<d_num_targets; k++){
-			d_phase_random = 1j*2*M_PI*float((std::rand()%1000+1)/1000.0);
-			std::fill_n(&d_filt_phase[k][0],noutput_items,d_phase_random);
+		if(d_rndm_phaseshift){
+			for(int k=0; k<d_num_targets; k++){
+				d_phase_random = 1j*2*M_PI*float((std::rand()%1000+1)/1000.0);
+				std::fill_n(&d_filt_phase[k][0],noutput_items,d_phase_random);
+			}
 		}
         
         // Go through targets and apply filters
@@ -481,8 +486,10 @@ namespace gr {
 			volk_32fc_x2_multiply_32fc(&d_in_fft[0], &d_in_fft[0], &d_filt_time[k][0], noutput_items); // add timeshift with multiply exp-func in freq domain
 			fftwf_execute(d_ifft_plan); // back in time domain
 			
-			// Add random phase shift
-			volk_32fc_x2_multiply_32fc(&d_hold_in[0], &d_hold_in[0], &d_filt_phase[k][0], noutput_items); // add random phase shift
+			if(d_rndm_phaseshift){
+				// Add random phase shift
+				volk_32fc_x2_multiply_32fc(&d_hold_in[0], &d_hold_in[0], &d_filt_phase[k][0], noutput_items); // add random phase shift
+			}
 			
 			// FIXME: Add azimuth
 			

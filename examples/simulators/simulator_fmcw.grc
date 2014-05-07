@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Fri May  2 21:17:21 2014</timestamp>
+  <timestamp>Wed May  7 16:04:41 2014</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -417,6 +417,10 @@
     <param>
       <key>_enabled</key>
       <value>True</value>
+    </param>
+    <param>
+      <key>apply_filter</key>
+      <value>0</value>
     </param>
     <param>
       <key>len_key</key>
@@ -1264,6 +1268,10 @@
       <value>center_freq</value>
     </param>
     <param>
+      <key>rndm_phaseshift</key>
+      <value>True</value>
+    </param>
+    <param>
       <key>len_key</key>
       <value>"packet_len"</value>
     </param>
@@ -1281,7 +1289,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(312, 218)</value>
+      <value>(316, 206)</value>
     </param>
     <param>
       <key>_rotation</key>

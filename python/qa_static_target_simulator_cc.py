@@ -368,10 +368,11 @@ class qa_static_target_simulator_cc (gr_unittest.TestCase):
 		rcs = (1e9, 1e9)
 		azimuth = (0, 0)
 		center_freq = 1e9
+		rndm_phase = True
 		
 		src = radar.signal_generator_cw_c(packet_len,samp_rate,frequency,amplitude)
 		head = blocks.head(8,test_len)
-		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq)
+		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq, rndm_phase)
 		mult = blocks.multiply_cc()
 		snk = blocks.vector_sink_c()
 		
@@ -408,11 +409,12 @@ class qa_static_target_simulator_cc (gr_unittest.TestCase):
 		rcs = (rcs, rcs)
 		azimuth = (0, 0)
 		center_freq = 1e9
+		rndm_phase = False
 		
 		src = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, freq, ampl)
 		head = blocks.head(8,test_len)
 		s2ts = blocks.stream_to_tagged_stream(8,1,packet_len,"packet_len")
-		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq)
+		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq, rndm_phase)
 		snk0 = blocks.vector_sink_c()
 		snk1 = blocks.vector_sink_c()
 		
@@ -424,7 +426,7 @@ class qa_static_target_simulator_cc (gr_unittest.TestCase):
 		data_in = snk1.data()
 		data_out = snk0.data()
 		data_out = data_out/max(np.real(data_out)) # rescale output data
-		#self.assertComplexTuplesAlmostEqual(data_out[0:len(data_out)-2],data_in[1:len(data_in)-1],4) # fails cause of new feature (random phase shift on every target)
+		self.assertComplexTuplesAlmostEqual(data_out[0:len(data_out)-2],data_in[1:len(data_in)-1],4)
 
 if __name__ == '__main__':
 	gr_unittest.run(qa_static_target_simulator_cc)#, "qa_static_target_simulator_cc.xml")
