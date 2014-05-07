@@ -392,6 +392,12 @@ namespace gr {
 		for(int k=0; k<d_num_targets; k++){
 			d_scale_ampl[k] = c_light/d_center_freq*std::sqrt(d_rcs[k])/std::pow(d_range[k],2)/std::pow(4*M_PI,3.0/2.0); // sqrt of radar equation as amplitude estimation
 		} // FIXME: is this correct? remove amplitude (look at implementation in work)
+		
+		// Resize phase shift filter
+		d_filt_phase.resize(d_num_targets);
+		
+		// Setup random numbers
+		std::srand(std::time(NULL)); // initial with time
 	}
 
     /*
@@ -414,7 +420,7 @@ namespace gr {
                        gr_vector_const_void_star &input_items,
                        gr_vector_void_star &output_items)
     {
-        gr_complex *in = (gr_complex *) input_items[0]; // remove const
+        const gr_complex *in = (const gr_complex *) input_items[0];
         gr_complex *out = (gr_complex *) output_items[0];
         
         // Set output items to tagged stream length
@@ -437,14 +443,15 @@ namespace gr {
 			d_ifft_plan = fftwf_plan_dft_1d(noutput_items, reinterpret_cast<fftwf_complex *>(&d_in_fft[0]),
 				reinterpret_cast<fftwf_complex *>(&d_hold_in[0]), FFTW_BACKWARD, FFTW_ESTIMATE);
 			
-			// Setup freq and time shift filter
+			// Setup freq and time shift filter, resize phase shift filter
 			for(int k=0; k<d_num_targets; k++){
 				d_filt_doppler[k].resize(noutput_items);
 				d_filt_time[k].resize(noutput_items);
+				d_filt_phase[k].resize(noutput_items);
 				d_phase_doppler = 0;
 				d_phase_time = 0;
 				for(int i=0; i<noutput_items; i++){
-					// Doppler shift filter with rescaling amplitude with rcs
+					// Doppler shift filter and rescaling amplitude with rcs
 					d_filt_doppler[k][i] = std::exp(d_phase_doppler)*d_scale_ampl[k];
 					d_phase_doppler = 1j*std::fmod(std::imag(d_phase_doppler)+2*M_PI*d_doppler[k]/(float)d_samp_rate,2*M_PI); // integrate phase (with plus!)
 					// Time shift filter
@@ -455,6 +462,12 @@ namespace gr {
 			
 			// Resize hold of noutput_items
 			d_hold_noutput = noutput_items;
+		}
+		
+		// Setup random phase shift
+        for(int k=0; k<d_num_targets; k++){
+			d_phase_random = 1j*2*M_PI*float((std::rand()%1000+1)/1000.0);
+			std::fill_n(&d_filt_phase[k][0],noutput_items,d_phase_random);
 		}
         
         // Go through targets and apply filters
@@ -467,6 +480,9 @@ namespace gr {
 			fftwf_execute(d_fft_plan); // go to freq domain
 			volk_32fc_x2_multiply_32fc(&d_in_fft[0], &d_in_fft[0], &d_filt_time[k][0], noutput_items); // add timeshift with multiply exp-func in freq domain
 			fftwf_execute(d_ifft_plan); // back in time domain
+			
+			// Add random phase shift
+			volk_32fc_x2_multiply_32fc(&d_hold_in[0], &d_hold_in[0], &d_filt_phase[k][0], noutput_items); // add random phase shift
 			
 			// FIXME: Add azimuth
 			
