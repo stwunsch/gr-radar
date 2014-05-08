@@ -455,10 +455,11 @@ namespace gr {
 		}
 		
 		// get rx_time tag
-		get_tags_in_range(d_tags,0,nitems_read(0),nitems_read(0)+1,pmt::string_to_symbol("rx_time")); // FIXME: warning or error if no rx_time is found?
+		get_tags_in_range(d_tags,0,nitems_read(0),nitems_read(0)+1,pmt::string_to_symbol("rx_time"));
 		
 		// setup msg pmt
-		d_ptimestamp = d_tags[0].value;
+		if(d_tags.size()>0) d_ptimestamp = d_tags[0].value;
+		else d_ptimestamp = pmt::make_tuple(pmt::from_uint64(0),pmt::from_double(-1)); // if no timetag is found, set to 0 and frac_sec to -1
 		d_pfreq = pmt::init_f32vector(d_freq.size(),d_freq);
 		d_ppks = pmt::init_f32vector(d_pks.size(),d_pks);
 		d_pangle = pmt::init_f32vector(d_angle.size(),d_angle);

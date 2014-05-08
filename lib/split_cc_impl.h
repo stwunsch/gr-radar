@@ -362,6 +362,7 @@ namespace gr {
       
       int d_packet_num, d_offset;
       std::vector<int> d_packet_parts;
+      std::vector< tag_t > d_tags;
 
       // Where all the action really happens
       int work(int noutput_items,

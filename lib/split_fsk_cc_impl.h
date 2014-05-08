@@ -361,6 +361,7 @@ namespace gr {
       ~split_fsk_cc_impl();
       
       int d_samp_per_freq, d_samp_discard, d_nblocks;
+      std::vector< tag_t > d_tags;
 
       // Where all the action really happens
       int work(int noutput_items,

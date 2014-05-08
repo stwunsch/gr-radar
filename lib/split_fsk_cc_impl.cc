@@ -369,6 +369,8 @@ namespace gr {
 		d_samp_discard = samp_discard;
 		
 		if(d_samp_per_freq<=d_samp_discard) throw std::runtime_error("samp_per_freq is smaller or equal than samp_discard");
+		
+		set_tag_propagation_policy(TPP_DONT); // does not apply on stream tags!
 	}
 
     /*
@@ -396,6 +398,13 @@ namespace gr {
         gr_complex *out1 = (gr_complex *) output_items[1];
 
         // Do <+signal processing+>
+        
+        // get all tags, reset offset and push to outputs
+		get_tags_in_range(d_tags,0,nitems_read(0),nitems_read(0)+1);
+		for(int k=0; k<d_tags.size(); k++){
+			add_item_tag(0,nitems_written(0),d_tags[k].key,d_tags[k].value,d_tags[k].srcid);
+			add_item_tag(1,nitems_written(1),d_tags[k].key,d_tags[k].value,d_tags[k].srcid);
+		}
         
         // Resize packet len and set noutput_items
         d_nblocks = ninput_items[0]/2/d_samp_per_freq;

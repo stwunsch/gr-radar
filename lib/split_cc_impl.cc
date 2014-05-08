@@ -368,6 +368,8 @@ namespace gr {
 		// Set key for info pmt and store packet_part identifier
 		d_packet_parts = packet_parts;
 		d_packet_num = packet_num;
+		
+		set_tag_propagation_policy(TPP_DONT); // does not apply on stream tags!s
 	}
 
     /*
@@ -394,6 +396,12 @@ namespace gr {
         gr_complex *out = (gr_complex *) output_items[0];
 
         // Do <+signal processing+>
+        
+        // get all tags, reset offset and push to output
+		get_tags_in_range(d_tags,0,nitems_read(0),nitems_read(0)+1);
+		for(int k=0; k<d_tags.size(); k++){
+			add_item_tag(0,nitems_written(0),d_tags[k].key,d_tags[k].value,d_tags[k].srcid);
+		}
         
         // Push only part of input stream to output and resize length tag value
         
