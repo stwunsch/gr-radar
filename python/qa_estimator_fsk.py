@@ -427,5 +427,5 @@ class qa_estimator_fsk (gr_unittest.TestCase):
 
 
 if __name__ == '__main__':
-	raw_input('Block for running gdb',)
+	#raw_input('Block for running gdb',)
 	gr_unittest.run(qa_estimator_fsk)#, "qa_estimator_fsk.xml")

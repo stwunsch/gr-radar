@@ -1,0 +1,4 @@
+for i in {1..20}
+do
+	ctest -R qa_ts_fft_cc
+done

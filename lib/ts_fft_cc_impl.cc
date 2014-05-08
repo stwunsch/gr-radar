@@ -366,6 +366,11 @@ namespace gr {
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(1, 1, sizeof(gr_complex)), len_key)
     {
+		// preallocate fft_plan and buffer to avoid segfaults in work
+		d_buffer = (gr_complex*) fftwf_malloc(sizeof(gr_complex)*1);
+		d_fft_plan = fftwf_plan_dft_1d(1, reinterpret_cast<fftwf_complex *>(d_buffer),
+			reinterpret_cast<fftwf_complex *>(d_buffer), FFTW_FORWARD, FFTW_ESTIMATE);
+		
 		d_apply_filter = apply_filter;
 		d_hold_noutput_items = -1;
 	}
@@ -375,6 +380,8 @@ namespace gr {
      */
     ts_fft_cc_impl::~ts_fft_cc_impl()
     {
+		// Free buffer on heap
+		free(d_buffer);
     }
 
     int
@@ -390,7 +397,7 @@ namespace gr {
                        gr_vector_const_void_star &input_items,
                        gr_vector_void_star &output_items)
     {
-        gr_complex *in = (gr_complex *) input_items[0]; // need to remove <const> because of reinterpret_cast
+        const gr_complex *in = (const gr_complex *) input_items[0];
         gr_complex *out = (gr_complex *) output_items[0];
 
         // Do <+signal processing+>
@@ -407,25 +414,27 @@ namespace gr {
 			for(int k=0; k<noutput_items/2; k++) d_filter[k] = 0.54+0.46*std::cos(2*M_PI*k/noutput_items); // filter for IQ signal correct this way?
 			for(int k=noutput_items/2; k<noutput_items; k++) d_filter[k] = 0.54+0.46*std::cos(-2*M_PI*k/noutput_items);
 			// Resize buffer
-			d_buffer.resize(noutput_items);
+			free(d_buffer);
+			d_buffer = (gr_complex*) fftwf_malloc(sizeof(gr_complex)*noutput_items);
 			// Setup plan
-			d_fft_plan = fftwf_plan_dft_1d(noutput_items, reinterpret_cast<fftwf_complex *>(&d_buffer[0]),
-			reinterpret_cast<fftwf_complex *>(&d_buffer[0]), FFTW_FORWARD, FFTW_ESTIMATE);
+			fftwf_destroy_plan(d_fft_plan); // destroy first to avoid memory leak
+			d_fft_plan = fftwf_plan_dft_1d(noutput_items, reinterpret_cast<fftwf_complex *>(d_buffer),
+			reinterpret_cast<fftwf_complex *>(d_buffer), FFTW_FORWARD, FFTW_ESTIMATE);
 		}
         
         // Fill buffer from input and apply filter
         if(d_apply_filter){
-			volk_32fc_x2_multiply_32fc(&d_buffer[0], in, &d_filter[0], noutput_items);
+			volk_32fc_x2_multiply_32fc(d_buffer, in, &d_filter[0], noutput_items);
 		}
 		else{
-			memcpy(&d_buffer[0], in, sizeof(gr_complex)*noutput_items);
+			memcpy(d_buffer, in, sizeof(gr_complex)*noutput_items);
 		}
         
         // Execute fft plan
 		fftwf_execute(d_fft_plan);
 		
 		// Push items to output
-		memcpy(out, &d_buffer[0], sizeof(gr_complex)*noutput_items);
+		memcpy(out, d_buffer, sizeof(gr_complex)*noutput_items);
 
         // Tell runtime system how many output items we produced.
         return noutput_items;

@@ -363,7 +363,7 @@ namespace gr {
       
       int d_apply_filter;
       fftwf_plan d_fft_plan;
-      std::vector<gr_complex> d_buffer;
+      gr_complex *d_buffer;
       std::vector<gr_complex> d_filter;
       int d_hold_noutput_items;
 

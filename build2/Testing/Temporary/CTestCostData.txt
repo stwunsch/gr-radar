@@ -1,0 +1,12 @@
+qa_ts_fft_cc 344 0.00143682
+test_radar 16 0.000212625
+qa_signal_generator_cw_c 16 0.0124402
+qa_signal_generator_fmcw_c 16 0.0118192
+qa_split_cc 16 0.0118262
+qa_os_cfar_c 16 0.045255
+qa_estimator_cw 16 0.0427493
+qa_static_target_simulator_cc 16 0.0138872
+qa_signal_generator_fsk_c 16 0.0124946
+qa_split_fsk_cc 16 0.0119467
+qa_estimator_fsk 11 0.0778484
+---

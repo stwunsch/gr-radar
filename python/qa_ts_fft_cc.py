@@ -380,7 +380,7 @@ class qa_ts_fft_cc (gr_unittest.TestCase):
 	def test_002_t (self):
 		# set up fg
 		# purpse is testing fft on high sample rates
-		test_len = 2**20
+		test_len = 2**19
 		
 		packet_len = 2**17
 		min_output_buffer = packet_len*2
@@ -394,15 +394,18 @@ class qa_ts_fft_cc (gr_unittest.TestCase):
 		head = blocks.head(8,test_len)
 		head.set_min_output_buffer(min_output_buffer)
 		
-		fft = radar.ts_fft_cc()
-		fft.set_min_output_buffer(min_output_buffer)
+		fft1 = radar.ts_fft_cc()
+		fft1.set_min_output_buffer(min_output_buffer)
+		fft2 = radar.ts_fft_cc()
+		fft2.set_min_output_buffer(min_output_buffer)
 		
 		snk1 = blocks.vector_sink_c()
 		snk2 = blocks.vector_sink_c()
 		
-		self.tb.connect(src,head,fft,snk2) # snk2 holds fft data
-		self.tb.connect(head,snk1) # snk1 holds time samples
+		self.tb.connect(src,head,fft1,snk1)
+		self.tb.connect(head,fft2,snk2)
 		self.tb.run ()
 
 if __name__ == '__main__':
+	#raw_input('block for gdb',)
 	gr_unittest.run(qa_ts_fft_cc)#, "qa_ts_fft_cc.xml")
