@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Thu May  8 11:15:47 2014</timestamp>
+  <timestamp>Thu May  8 13:24:32 2014</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -722,69 +722,6 @@
     </param>
   </block>
   <block>
-    <key>radar_static_target_simulator_cc</key>
-    <param>
-      <key>id</key>
-      <value>radar_static_target_simulator_cc_0</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>range</key>
-      <value>(10, 20, 50)</value>
-    </param>
-    <param>
-      <key>velocity</key>
-      <value>(5, 10, 15)</value>
-    </param>
-    <param>
-      <key>rcs</key>
-      <value>(1e9, 1e11, 1e12)</value>
-    </param>
-    <param>
-      <key>azimuth</key>
-      <value>(0,0, 0)</value>
-    </param>
-    <param>
-      <key>samp_rate</key>
-      <value>samp_rate</value>
-    </param>
-    <param>
-      <key>center_freq</key>
-      <value>center_freq</value>
-    </param>
-    <param>
-      <key>rndm_phaseshift</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>len_key</key>
-      <value>"packet_len"</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>min_output_buffer</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(398, 287)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
     <key>rational_resampler_xxx</key>
     <param>
       <key>id</key>
@@ -1180,6 +1117,77 @@
     <param>
       <key>_coordinate</key>
       <value>(822, 814)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>radar_static_target_simulator_cc</key>
+    <param>
+      <key>id</key>
+      <value>radar_static_target_simulator_cc_0</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>range</key>
+      <value>(10, 20, 50)</value>
+    </param>
+    <param>
+      <key>velocity</key>
+      <value>(5, 10, 15)</value>
+    </param>
+    <param>
+      <key>rcs</key>
+      <value>(1e9, 1e11, 1e12)</value>
+    </param>
+    <param>
+      <key>azimuth</key>
+      <value>(0,0, 0)</value>
+    </param>
+    <param>
+      <key>samp_rate</key>
+      <value>samp_rate</value>
+    </param>
+    <param>
+      <key>center_freq</key>
+      <value>center_freq</value>
+    </param>
+    <param>
+      <key>self_coupling_db</key>
+      <value>-10</value>
+    </param>
+    <param>
+      <key>rndm_phaseshift</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>self_coupling</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>len_key</key>
+      <value>"packet_len"</value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>min_output_buffer</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(398, 287)</value>
     </param>
     <param>
       <key>_rotation</key>

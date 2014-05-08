@@ -352,16 +352,18 @@ namespace gr {
   namespace radar {
 
     static_target_simulator_cc::sptr
-    static_target_simulator_cc::make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, bool rndm_phaseshift, const std::string& len_key)
+    static_target_simulator_cc::make(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, 
+										int samp_rate, float center_freq, float self_coupling_db, bool rndm_phaseshift, bool self_coupling, const std::string& len_key)
     {
       return gnuradio::get_initial_sptr
-        (new static_target_simulator_cc_impl(range, velocity, rcs, azimuth, samp_rate, center_freq, rndm_phaseshift, len_key));
+        (new static_target_simulator_cc_impl(range, velocity, rcs, azimuth, samp_rate, center_freq, self_coupling_db, rndm_phaseshift, self_coupling, len_key));
     }
 
     /*
      * The private constructor
      */
-    static_target_simulator_cc_impl::static_target_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, bool rndm_phaseshift, const std::string& len_key)
+    static_target_simulator_cc_impl::static_target_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, 
+																	int samp_rate, float center_freq, float self_coupling_db, bool rndm_phaseshift, bool self_coupling, const std::string& len_key)
       : gr::tagged_stream_block("static_target_simulator_cc",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(1, 1, sizeof(gr_complex)), len_key)
@@ -374,6 +376,8 @@ namespace gr {
 		d_samp_rate = samp_rate;
 		d_hold_noutput = -1;
 		d_rndm_phaseshift = rndm_phaseshift;
+		d_self_coupling = self_coupling;
+		d_self_coupling_db = self_coupling_db;
 		
 		// Setup rx_time tag
 		d_key = pmt::string_to_symbol("rx_time");
@@ -507,6 +511,11 @@ namespace gr {
 			
 			// Add to output
 			for(int i=0; i<noutput_items; i++) out[i] += d_hold_in[i];
+		}
+		
+		// Add self coupling
+		if(d_self_coupling){
+			for(int i=0; i<noutput_items; i++) out[i] += (gr_complex)pow(10,d_self_coupling_db/20.0)*in[i]; // d_self_coupling_db gives scaling of power
 		}
 
         // Tell runtime system how many output items we produced.

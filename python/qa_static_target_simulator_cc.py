@@ -369,10 +369,12 @@ class qa_static_target_simulator_cc (gr_unittest.TestCase):
 		azimuth = (0, 0)
 		center_freq = 1e9
 		rndm_phase = True
+		self_coupling = False
+		self_coupling_db = 10;
 		
 		src = radar.signal_generator_cw_c(packet_len,samp_rate,frequency,amplitude)
 		head = blocks.head(8,test_len)
-		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq, rndm_phase)
+		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq, self_coupling_db, rndm_phase, self_coupling)
 		mult = blocks.multiply_cc()
 		snk = blocks.vector_sink_c()
 		
@@ -410,11 +412,13 @@ class qa_static_target_simulator_cc (gr_unittest.TestCase):
 		azimuth = (0, 0)
 		center_freq = 1e9
 		rndm_phase = False
+		self_coupling = False
+		self_coupling_db = 1;
 		
 		src = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, freq, ampl)
 		head = blocks.head(8,test_len)
 		s2ts = blocks.stream_to_tagged_stream(8,1,packet_len,"packet_len")
-		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq, rndm_phase)
+		sim = radar.static_target_simulator_cc(Range, velocity, rcs, azimuth, samp_rate, center_freq, self_coupling_db, rndm_phase, self_coupling)
 		snk0 = blocks.vector_sink_c()
 		snk1 = blocks.vector_sink_c()
 		

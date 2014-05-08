@@ -358,7 +358,8 @@ namespace gr {
       int calculate_output_stream_length(const gr_vector_int &ninput_items);
 
      public:
-      static_target_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, int samp_rate, float center_freq, bool rndm_phaseshift, const std::string& len_key);
+      static_target_simulator_cc_impl(std::vector<float> range, std::vector<float> velocity, std::vector<float> rcs, std::vector<float> azimuth, 
+													int samp_rate, float center_freq, float self_coupling_db, bool rndm_phaseshift, bool self_coupling, const std::string& len_key);
       ~static_target_simulator_cc_impl();
       
       std::vector<float> d_range, d_velocity, d_rcs, d_azimuth;
@@ -367,6 +368,9 @@ namespace gr {
       int d_hold_noutput;
       bool d_rndm_phaseshift;
       
+      bool d_self_coupling;
+      float d_self_coupling_db;
+      
       int d_num_targets;
       std::vector<float> d_doppler, d_scale_ampl, d_timeshift;
       gr_complex d_phase_doppler, d_phase_time, d_phase_random;
@@ -374,7 +378,7 @@ namespace gr {
       
       fftwf_plan d_fft_plan, d_ifft_plan;
       std::vector<gr_complex> d_in_fft;
-      std::vector<std::vector<gr_complex> > d_filt_doppler, d_filt_time, d_filt_phase;
+      std::vector<std::vector<gr_complex> > d_filt_doppler, d_filt_time, d_filt_phase, d_filt_self_coupling;
       
       pmt::pmt_t d_key, d_val, d_srcid;
       uint64_t d_time_sec;
