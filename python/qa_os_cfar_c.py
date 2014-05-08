@@ -341,8 +341,10 @@
 # Public License instead of this License.
 
 from gnuradio import gr, gr_unittest
-from gnuradio import blocks
+from gnuradio import blocks,analog
 import radar_swig as radar
+from time import sleep
+import pmt
 
 class qa_os_cfar_c (gr_unittest.TestCase):
 
@@ -354,9 +356,34 @@ class qa_os_cfar_c (gr_unittest.TestCase):
 
     def test_001_t (self):
         # set up fg
-        self.tb.run ()
-        # check data
-        # FIXME: add testcase os_cfar (how??)
+        test_len = 1000
+        samp_rate = 2000
+        freq = 200
+        ampl = 1
+        packet_len = test_len
+        compare_sample = 5
+        protect_sample = 0
+        rel_threshold = 0.78
+        mult_threshold = 10
+        
+        src = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, freq, ampl)
+        head = blocks.head(8,test_len)
+        s2ts = blocks.stream_to_tagged_stream(8,1,packet_len,"packet_len")
+        fft = radar.ts_fft_cc()
+        cfar = radar.os_cfar_c(samp_rate, compare_sample, protect_sample, rel_threshold, mult_threshold)
+        debug = blocks.message_debug()
+        
+        self.tb.connect(src,head,s2ts,fft,cfar)
+        self.tb.msg_connect(cfar,"Msg out",debug,"store")
+        #self.tb.msg_connect(cfar,"Msg out",debug,"print")
+        self.tb.start()
+        sleep(0.5)
+        self.tb.stop()
+        self.tb.wait()
+        
+        # check frequency in os_cfar message with given one
+        msg = debug.get_message(0)
+        self.assertAlmostEqual(freq,pmt.f32vector_ref(pmt.nth(1,msg),0),8)
 
 
 if __name__ == '__main__':

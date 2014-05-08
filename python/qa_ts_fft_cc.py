@@ -376,6 +376,33 @@ class qa_ts_fft_cc (gr_unittest.TestCase):
 		data = snk1.data()
 		np_fft = numpy.fft.fft(data) # get fft
 		self.assertComplexTuplesAlmostEqual(snk2.data(),np_fft,4) # compare numpy fft and fft from block
+		
+	def test_002_t (self):
+		# set up fg
+		# purpse is testing fft on high sample rates
+		test_len = 2**20
+		
+		packet_len = 2**17
+		min_output_buffer = packet_len*2
+		samp_rate = 10000000
+		frequency = 200000
+		amplitude = 1
+		
+		src = radar.signal_generator_cw_c(packet_len,samp_rate,(frequency,frequency),amplitude)
+		src.set_min_output_buffer(min_output_buffer)
+		
+		head = blocks.head(8,test_len)
+		head.set_min_output_buffer(min_output_buffer)
+		
+		fft = radar.ts_fft_cc()
+		fft.set_min_output_buffer(min_output_buffer)
+		
+		snk1 = blocks.vector_sink_c()
+		snk2 = blocks.vector_sink_c()
+		
+		self.tb.connect(src,head,fft,snk2) # snk2 holds fft data
+		self.tb.connect(head,snk1) # snk1 holds time samples
+		self.tb.run ()
 
 if __name__ == '__main__':
-	gr_unittest.run(qa_ts_fft_cc, "qa_ts_fft_cc.xml")
+	gr_unittest.run(qa_ts_fft_cc)#, "qa_ts_fft_cc.xml")
