@@ -394,7 +394,6 @@ namespace gr {
 		d_ppks = pmt::nth(2,msg);
 		d_pphase = pmt::nth(3,msg);
 		
-		d_timestamp = pmt::to_long(d_ptimestamp);
 		d_freq = pmt::f32vector_elements(d_pfreq);
 		d_pks = pmt::f32vector_elements(d_ppks);
 		d_phase = pmt::f32vector_elements(d_pphase);
@@ -420,7 +419,10 @@ namespace gr {
 		d_range_value = pmt::init_f32vector(d_range.size(), d_range); // vector to pmt
 		d_range_pack = pmt::list2(d_range_key, d_range_value); // make list for range information
 		
-		d_value = pmt::list2(d_vel_pack, d_range_pack); // all information to one pmt list (only velocity -> only 1 item list)
+		d_time_key = pmt::string_to_symbol("rx_time"); // identifier timestamp
+		d_time_pack = pmt::list2(d_time_key, d_ptimestamp); // make list for timestamp information
+		
+		d_value = pmt::list3(d_time_pack, d_vel_pack, d_range_pack); // all information to one pmt list (only velocity -> only 1 item list)
 		message_port_pub(d_port_id_out,d_value);
 	}
 

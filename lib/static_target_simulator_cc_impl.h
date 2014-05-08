@@ -377,6 +377,8 @@ namespace gr {
       std::vector<std::vector<gr_complex> > d_filt_doppler, d_filt_time, d_filt_phase;
       
       pmt::pmt_t d_key, d_val, d_srcid;
+      uint64_t d_time_sec;
+      double d_time_frac_sec;
            
       const static float c_light = 3e8;
 

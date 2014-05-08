@@ -368,6 +368,7 @@ namespace gr {
       
       pmt::pmt_t d_port_id;
       pmt::pmt_t d_ptimestamp,d_pfreq,d_ppks,d_pangle,d_value;
+      std::vector< tag_t > d_tags;
 
       // Where all the action really happens
       int work(int noutput_items,

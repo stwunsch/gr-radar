@@ -392,7 +392,6 @@ namespace gr {
 		d_pfreq = pmt::nth(1,msg);
 		d_ppks = pmt::nth(2,msg);
 		
-		d_timestamp = pmt::to_long(d_ptimestamp);
 		d_freq = pmt::f32vector_elements(d_pfreq);
 		d_pks = pmt::f32vector_elements(d_ppks);
 		
@@ -405,8 +404,12 @@ namespace gr {
 		// Push pmt to output msg port
 		d_vel_key = pmt::string_to_symbol("velocity"); // identifier velocity
 		d_vel_value = pmt::init_f32vector(d_vel.size(), d_vel); // vector to pmt
-		d_value = pmt::list2(d_vel_key, d_vel_value); // make list for velocity information
-		d_value = pmt::list1(d_value); // all information to one pmt list (only velocity -> only 1 item list)
+		d_vel_pack = pmt::list2(d_vel_key, d_vel_value); // make list for velocity information
+		
+		d_time_key = pmt::string_to_symbol("rx_time"); // identifier timestamp
+		d_time_pack = pmt::list2(d_time_key, d_ptimestamp); // make list for timestamp (rx_time) information
+		
+		d_value = pmt::list2(d_time_pack, d_vel_pack); // all information to one pmt list (only velocity -> only 1 item list)
 		message_port_pub(d_port_id_out,d_value);
 	}
 

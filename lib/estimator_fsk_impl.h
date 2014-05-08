@@ -361,7 +361,6 @@ namespace gr {
       float d_center_freq, d_delta_freq;
       pmt::pmt_t d_port_id_in, d_port_id_out;
       
-      int d_timestamp;
       std::vector<float> d_freq, d_pks, d_phase;
 	  pmt::pmt_t d_ptimestamp, d_pfreq, d_ppks, d_pphase;
 	  
@@ -370,6 +369,7 @@ namespace gr {
 	  pmt::pmt_t d_vel_key, d_vel_value, d_vel_pack;
 	  std::vector<float> d_range;
 	  pmt::pmt_t d_range_key, d_range_value, d_range_pack;
+	  pmt::pmt_t d_time_key, d_time_pack;
       
       const static float c_light = 3e8;
       

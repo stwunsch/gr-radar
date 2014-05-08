@@ -361,12 +361,12 @@ namespace gr {
       float d_center_freq;
       pmt::pmt_t d_port_id_in, d_port_id_out;
       
-      int d_timestamp;
       std::vector<float> d_freq, d_pks;
 	  pmt::pmt_t d_ptimestamp, d_pfreq, d_ppks;
 	  
 	  std::vector<float> d_vel;
-	  pmt::pmt_t d_vel_key, d_vel_value, d_value;
+	  pmt::pmt_t d_vel_key, d_vel_value, d_vel_pack, d_value;
+	  pmt::pmt_t d_time_key, d_time_value, d_time_pack;
       
       const static float c_light = 3e8;
     };

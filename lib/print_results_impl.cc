@@ -387,12 +387,15 @@ namespace gr {
 		d_size_msg = pmt::length(msg);
 		for(int k=0; k<d_size_msg; k++){
 			d_msg_part = pmt::nth(k,msg);
-			d_size_part = pmt::length(pmt::nth(1,d_msg_part));
 			// Print identifier (which information)
 			std::cout << pmt::symbol_to_string(pmt::nth(0,d_msg_part)) << ": ";
 			// Print information, every datatype needs an if-statement!
 			if(pmt::is_f32vector(pmt::nth(1,d_msg_part))){
+				d_size_part = pmt::length(pmt::nth(1,d_msg_part));
 				for(int l=0; l<d_size_part; l++) std::cout << pmt::f32vector_elements(pmt::nth(1,d_msg_part),d_size_part)[l] << " ";
+			}
+			else if(pmt::is_tuple(pmt::nth(1,d_msg_part))){
+				std::cout << pmt::to_uint64(pmt::tuple_ref(pmt::nth(1,d_msg_part),0)) << ":" << pmt::to_double(pmt::tuple_ref(pmt::nth(1,d_msg_part),1)) << " ";
 			}
 			else{
 				std::cout << "Can not identify data type.";

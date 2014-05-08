@@ -436,9 +436,11 @@ namespace gr {
         // Do <+signal processing+>
         
         // Set rx_time tag
+        d_time_sec = nitems_written(0)/d_samp_rate;
+        d_time_frac_sec = nitems_written(0)/(float)d_samp_rate-d_time_sec;
         d_val = pmt::make_tuple
-            (pmt::from_uint64((uint64_t)time(NULL)),
-             pmt::from_double(0)); // FIXME: add fractional second, correct implementation?
+            (pmt::from_uint64(d_time_sec),
+             pmt::from_double(d_time_frac_sec)); // FIXME: correct implementation?
         add_item_tag(0, nitems_written(0), d_key, d_val, d_srcid);
         
         // Set output to zero

@@ -346,7 +346,6 @@
 
 #include <gnuradio/io_signature.h>
 #include "os_cfar_c_impl.h"
-#include <iostream>
 
 namespace gr {
   namespace radar {
@@ -455,8 +454,11 @@ namespace gr {
 			
 		}
 		
+		// get rx_time tag
+		get_tags_in_range(d_tags,0,nitems_read(0),nitems_read(0)+1,pmt::string_to_symbol("rx_time")); // FIXME: warning or error if no rx_time is found?
+		
 		// setup msg pmt
-		d_ptimestamp = pmt::from_long(0); // FIXME: better timestamp!
+		d_ptimestamp = d_tags[0].value;
 		d_pfreq = pmt::init_f32vector(d_freq.size(),d_freq);
 		d_ppks = pmt::init_f32vector(d_pks.size(),d_pks);
 		d_pangle = pmt::init_f32vector(d_angle.size(),d_angle);

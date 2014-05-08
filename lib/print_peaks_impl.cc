@@ -389,7 +389,7 @@ namespace gr {
 		d_angle = pmt::nth(3,msg);
 		d_len_vec = pmt::length(d_freq);
 		
-		std::cout << "Timestamp: " << pmt::to_long(d_timestamp) << std::endl;
+		std::cout << "Timestamp: " << pmt::to_uint64(pmt::tuple_ref(d_timestamp,0)) << ":" << pmt::to_double(pmt::tuple_ref(d_timestamp,1)) << std::endl;
 		
 		std::cout << "Frequencies: ";
 		for(int k=0; k<d_len_vec; k++) std::cout << pmt::f32vector_elements(d_freq,d_len_vec)[k] << " ";
