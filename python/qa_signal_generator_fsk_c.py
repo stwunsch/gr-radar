@@ -355,6 +355,7 @@ class qa_signal_generator_fsk_c (gr_unittest.TestCase):
 		self.tb = None
 
 	def test_001_t (self):
+		# compare signal in time domain
 		# set up fg
 		test_len = 1000
 		
@@ -400,6 +401,7 @@ class qa_signal_generator_fsk_c (gr_unittest.TestCase):
 		self.assertComplexTuplesAlmostEqual(data,ref_data,4)
 		
 	def test_002_t (self):
+		# compare signal in frequency domain
 		# set up fg
 		test_len = 1000
 		

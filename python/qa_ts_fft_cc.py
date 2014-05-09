@@ -396,14 +396,14 @@ class qa_ts_fft_cc (gr_unittest.TestCase):
 		
 		fft1 = radar.ts_fft_cc()
 		fft1.set_min_output_buffer(min_output_buffer)
-		fft2 = radar.ts_fft_cc()
-		fft2.set_min_output_buffer(min_output_buffer)
+		#fft2 = radar.ts_fft_cc()
+		#fft2.set_min_output_buffer(min_output_buffer)
 		
 		snk1 = blocks.vector_sink_c()
-		snk2 = blocks.vector_sink_c()
+		#snk2 = blocks.vector_sink_c()
 		
 		self.tb.connect(src,head,fft1,snk1)
-		self.tb.connect(head,fft2,snk2)
+		#self.tb.connect(head,fft2,snk2)
 		self.tb.run ()
 
 if __name__ == '__main__':

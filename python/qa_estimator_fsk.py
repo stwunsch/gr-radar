@@ -355,9 +355,10 @@ class qa_estimator_fsk (gr_unittest.TestCase):
 		self.tb = None
 
 	def test_001_t (self):
+		# run full fsk setup on high sample rates
 		test_len = 2**19
 
-		packet_len = 2**18
+		packet_len = 2**17
 		min_output_buffer = packet_len*2
 		samp_rate = 5000000
 		
