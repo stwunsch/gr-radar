@@ -45,7 +45,7 @@ if(NOT radar_sources)
 endif(NOT radar_sources)
 
 add_library(gnuradio-radar SHARED ${radar_sources})
-target_link_libraries(gnuradio-radar ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES} ${FFTW3F_LIBRARIES})
+target_link_libraries(gnuradio-radar ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES} ${FFTW3F_LIBRARIES} ${UHD_LIBRARIES})
 set_target_properties(gnuradio-radar PROPERTIES DEFINE_SYMBOL "gnuradio_radar_EXPORTS")
 
 if(APPLE)
@@ -83,6 +83,7 @@ target_link_libraries(
   ${Boost_LIBRARIES}
   ${CPPUNIT_LIBRARIES}
   ${FFTW3F_LIBRARY_DIRS}
+  ${UHD_LIBRARY_DIRS}
   gnuradio-radar
 )
 

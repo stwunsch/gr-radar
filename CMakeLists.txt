@@ -85,6 +85,7 @@ set(GRC_BLOCKS_DIR      ${GR_PKG_DATA_DIR}/grc/blocks)
 ########################################################################
 find_package(CppUnit)
 find_package(FFTW3F)
+find_package(UHD)
 
 # Search for GNU Radio and its components and versions. Add any
 # components required to the list of GR_REQUIRED_COMPONENTS (in all
@@ -109,6 +110,7 @@ include_directories(
     ${CPPUNIT_INCLUDE_DIRS}
     ${GNURADIO_ALL_INCLUDE_DIRS}
     ${FFTW3F_INCLUDE_DIRS}
+    ${UHD_INCLUDE_DIRS}
 )
 
 link_directories(
@@ -116,6 +118,7 @@ link_directories(
     ${CPPUNIT_LIBRARY_DIRS}
     ${GNURADIO_RUNTIME_LIBRARY_DIRS}
     ${FFTW3F_LIBRARY_DIRS}
+    ${UHD_LIBRARY_DIRS}
 )
 
 # Set component parameters
