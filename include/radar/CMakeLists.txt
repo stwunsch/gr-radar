@@ -33,5 +33,6 @@ install(FILES
     print_peaks.h
     signal_generator_fsk_c.h
     split_fsk_cc.h
-    estimator_fsk.h DESTINATION include/radar
+    estimator_fsk.h
+    usrp_echotimer_cc.h DESTINATION include/radar
 )

@@ -28,5 +28,6 @@ install(FILES
     radar_print_peaks.xml
     radar_signal_generator_fsk_c.xml
     radar_split_fsk_cc.xml
-    radar_estimator_fsk.xml DESTINATION share/gnuradio/grc/blocks
+    radar_estimator_fsk.xml
+    radar_usrp_echotimer_cc.xml DESTINATION share/gnuradio/grc/blocks
 )
