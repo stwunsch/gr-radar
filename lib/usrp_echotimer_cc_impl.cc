@@ -347,6 +347,7 @@
 #include <gnuradio/io_signature.h>
 #include "usrp_echotimer_cc_impl.h"
 #include <iostream>
+#include <boost/thread.hpp>
 
 namespace gr {
   namespace radar {
@@ -368,12 +369,18 @@ namespace gr {
     {
 		d_samp_rate = samp_rate;
 		d_center_freq = center_freq;
-		d_amplitude = 0.5;
-		d_args = "addr=192.168.10.6";
-		d_wire = "";
+		
+		//***** Setup USRP TX *****//
+		
+		d_args_tx = "addr=192.168.10.6";
+		d_wire_tx = "";
+		d_clock_source_tx = "internal";
+		d_antenna_tx = "J1";
+		d_lo_offset_tx = 0;
+		d_timeout_tx = 0.1; // FIXME: timeout? why default on 0.1?
 		
 		// Setup USRP TX: args (addr,...)
-		d_usrp_tx = uhd::usrp::multi_usrp::make(d_args);
+		d_usrp_tx = uhd::usrp::multi_usrp::make(d_args_tx);
 		std::cout << "Using USRP Device (TX): " << std::endl << d_usrp_tx->get_pp_string() << std::endl;
 		
 		// Setup USRP TX: sample rate
@@ -382,24 +389,66 @@ namespace gr {
 		std::cout << "Actual TX Rate: " << d_usrp_tx->get_tx_rate() << std::endl;
 		
 		// Setup USRP TX: tune request
-		d_tune_request = uhd::tune_request_t(d_center_freq); // FIXME: add alternative tune requests
-		d_usrp_tx->set_tx_freq(d_tune_request);
+		d_tune_request_tx = uhd::tune_request_t(d_center_freq); // FIXME: add alternative tune requests
+		d_usrp_tx->set_tx_freq(d_tune_request_tx);
 		
 		// Setup USRP TX: antenna
-		d_usrp_tx->set_tx_antenna("J1");
+		d_usrp_tx->set_tx_antenna(d_antenna_tx);
 		
-		/*
+		// Setup USRP TX: clock source
+		d_usrp_tx->set_clock_source(d_clock_source_tx); // Set TX clock to internal, TX is master
+		
 		// Setup USRP TX: timestamp
 		d_usrp_tx->set_time_now(uhd::time_spec_t(0.0)); // Set to 0 on startup
-		*/
+		// FIXME: need to set time source? internal on default?
 		
 		// Setup transmit streamer
-		uhd::stream_args_t stream_args("fc32", d_wire); //complex floats
-		d_tx_stream = d_usrp_tx->get_tx_stream(stream_args);
-		d_timeout = 0.1;
+		uhd::stream_args_t stream_args_tx("fc32", d_wire_tx); // complex floats
+		d_tx_stream = d_usrp_tx->get_tx_stream(stream_args_tx);
+		
+		//***** Setup USRP RX *****//
+		
+		d_amplitude_rx = 0.5;
+		d_args_rx = "addr=192.168.10.4";
+		d_wire_rx = "";
+		d_clock_source_rx = "mimo";
+		d_time_source_rx = "mimo";
+		d_antenna_rx = "J1";
+		d_lo_offset_rx = 0;
+		d_timeout_rx = 0; // FIXME: timeout? why default on 0.1?
+		
+		// Setup USRP RX: args (addr,...)
+		d_usrp_rx = uhd::usrp::multi_usrp::make(d_args_rx);
+		std::cout << "Using USRP Device (RX): " << std::endl << d_usrp_rx->get_pp_string() << std::endl;
+		
+		// Setup USRP RX: sample rate
+		std::cout << "Setting RX Rate: " << d_samp_rate << std::endl;
+		d_usrp_rx->set_rx_rate(d_samp_rate);
+		std::cout << "Actual RX Rate: " << d_usrp_rx->get_rx_rate() << std::endl;
+		
+		// Setup USRP RX: tune request
+		d_tune_request_rx = uhd::tune_request_t(d_center_freq, d_lo_offset_rx); // FIXME: add alternative tune requests
+		d_usrp_rx->set_rx_freq(d_tune_request_rx);
+		
+		// Setup USRP RX: antenna
+		d_usrp_rx->set_rx_antenna(d_antenna_rx);
+		
+		// Setup USRP RX: clock source
+		d_usrp_rx->set_clock_source(d_clock_source_rx); // RX is slave, clock is set on TX
+		
+		// Setup USRP RX: time source
+		d_usrp_rx->set_time_source(d_time_source_rx);
+		
+		// Setup receive streamer
+		uhd::stream_args_t stream_args_rx("fc32", d_wire_rx); // complex floats
+		std::vector<size_t> channel_nums; channel_nums.push_back(0); // define channel!
+		stream_args_rx.channels = channel_nums;
+		d_rx_stream = d_usrp_rx->get_rx_stream(stream_args_rx);
+		
+		//***** Misc *****//
 		
 		// Setup thread priority
-		//uhd::set_thread_priority_safe(); // necessary?
+		//uhd::set_thread_priority_safe(); // necessary? dont work...
 	}
 
     /*
@@ -415,6 +464,79 @@ namespace gr {
       int noutput_items = ninput_items[0];
       return noutput_items ;
     }
+    
+    int
+    usrp_echotimer_cc_impl::send(const gr_complex *in, int noutput_items)
+    {
+		// Setup metadata for first package
+        d_metadata_tx.start_of_burst = true;
+		d_metadata_tx.end_of_burst = false;
+		d_metadata_tx.has_time_spec = false;
+		//d_metadata.time_spec = uhd::time_spec_t(1.5+d_timeout); // Timespec needed?
+		
+		// Send input buffer
+		size_t num_acc_samps = 0; // Number of accumulated samples
+		size_t samps_to_send, num_tx_samps, total_num_samps;
+		total_num_samps = noutput_items;
+		while(num_acc_samps < total_num_samps){
+			samps_to_send = std::min(total_num_samps - num_acc_samps, d_tx_stream->get_max_num_samps());
+
+			// Send a single packet
+			num_tx_samps = d_tx_stream->send(in, samps_to_send, d_metadata_tx, d_timeout_tx);
+			in = in + num_tx_samps;
+
+			// Do not use time spec for subsequent packets
+			d_metadata_tx.has_time_spec = false;
+
+			if (num_tx_samps < samps_to_send) std::cerr << "Send timeout..." << std::endl;
+
+			num_acc_samps += num_tx_samps;
+		}
+
+		// Send a mini EOB packet
+		d_metadata_tx.end_of_burst = true;
+		d_tx_stream->send("", 0, d_metadata_tx);
+		
+		return 1; // FIXME: useless atm
+    }
+    
+    int
+    usrp_echotimer_cc_impl::receive(const gr_complex *out, int noutput_items)
+    {
+		// Setup RX streaming
+		size_t total_num_samps = noutput_items;
+		uhd::stream_cmd_t stream_cmd(uhd::stream_cmd_t::STREAM_MODE_NUM_SAMPS_AND_DONE);
+		stream_cmd.num_samps = total_num_samps;
+		stream_cmd.stream_now = false;
+		stream_cmd.time_spec = uhd::time_spec_t(d_timeout_rx); // FIXME: do I need this timespec?
+		d_rx_stream->issue_stream_cmd(stream_cmd);
+		
+		size_t num_acc_samps = 0; // Number of accumulated samples
+		size_t num_rx_samps, samps_to_recv;
+		while(num_acc_samps < total_num_samps){
+			// Receive a single packet
+			samps_to_recv = std::min(total_num_samps-num_acc_samps, d_rx_stream->get_max_num_samps());
+			num_rx_samps = d_rx_stream->recv(out, samps_to_recv, d_metadata_rx, d_timeout_rx, true);
+			out = out + num_rx_samps;
+
+			// Use a small timeout for subsequent packets
+			d_timeout_rx = 0.1;
+
+			// Handle the error code
+			if (d_metadata_rx.error_code == uhd::rx_metadata_t::ERROR_CODE_TIMEOUT) break;
+			if (d_metadata_rx.error_code != uhd::rx_metadata_t::ERROR_CODE_NONE){
+			throw std::runtime_error(str(boost::format(
+			"Receiver error %s"
+			) % d_metadata_rx.strerror()));
+			}
+
+			num_acc_samps += num_rx_samps;
+		}
+
+		if (num_acc_samps < total_num_samps) std::cerr << "Receive timeout before all samples received..." << std::endl;
+    
+		return 1; // FIXME: useless atm
+    }
 
     int
     usrp_echotimer_cc_impl::work (int noutput_items,
@@ -428,36 +550,14 @@ namespace gr {
         // Set output items on packet length
         noutput_items = ninput_items[0];
         
-        // Setup buffer
-        //std::cout << "Max/actual buffer size: " << d_tx_stream->get_max_num_samps() << "/" << noutput_items << std::endl;
         
-        // Setup metadata for first package
-        d_metadata.start_of_burst = false;
-		d_metadata.end_of_burst = false;
-		d_metadata.has_time_spec = true;
-		d_metadata.time_spec = uhd::time_spec_t(1+d_timeout); // Timespec needed?
-		
-		// Send input buffer
-		d_num_acc_samps = 0; // Number of accumulated samples
-		d_total_num_samps = noutput_items;
-		while(d_num_acc_samps < d_total_num_samps){
-			d_samps_to_send = std::min(d_total_num_samps - d_num_acc_samps, d_tx_stream->get_max_num_samps());
-
-			// Send a single packet
-			d_num_tx_samps = d_tx_stream->send(in, d_samps_to_send, d_metadata, d_timeout);
-			in = in + d_num_tx_samps;
-
-			// Do not use time spec for subsequent packets
-			d_metadata.has_time_spec = false;
-
-			if (d_num_tx_samps < d_samps_to_send) std::cerr << "Send timeout..." << std::endl;
-
-			d_num_acc_samps += d_num_tx_samps;
-		}
-
-		// Send a mini EOB packet
-		d_metadata.end_of_burst = true;
-		d_tx_stream->send("", 0, d_metadata);
+        // Send thread
+        //send(in, noutput_items);
+        
+        // Receive thread
+        receive(out, noutput_items);
+        
+        // Wait for threads to complete
 
         // Tell runtime system how many output items we produced.
         return noutput_items;

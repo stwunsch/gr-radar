@@ -362,18 +362,25 @@ namespace gr {
      public:
       usrp_echotimer_cc_impl(int samp_rate, float center_freq, const std::string& len_key);
       ~usrp_echotimer_cc_impl();
+      int send(const gr_complex *in, int noutput_items);
+      int receive(const gr_complex *out, int noutput_items);
       
       int d_samp_rate;
-      float d_center_freq, d_amplitude;
+      float d_center_freq, d_amplitude_rx;
       
-      std::string d_args;
-	  std::string d_wire;
-      uhd::usrp::multi_usrp::sptr d_usrp_tx;
-      uhd::tune_request_t d_tune_request;
+      std::string d_args_tx, d_args_rx;
+      std::string d_clock_source_tx, d_clock_source_rx;
+	  std::string d_wire_tx, d_wire_rx;
+	  std::string d_antenna_tx, d_antenna_rx;
+	  std::string d_time_source_rx;
+      uhd::usrp::multi_usrp::sptr d_usrp_tx, d_usrp_rx;
+      uhd::tune_request_t d_tune_request_tx, d_tune_request_rx;
       uhd::tx_streamer::sptr d_tx_stream;
-      uhd::tx_metadata_t d_metadata;
-      float d_timeout;
-      size_t d_num_tx_samps, d_samps_to_send, d_num_acc_samps, d_total_num_samps;
+      uhd::rx_streamer::sptr d_rx_stream;
+      uhd::tx_metadata_t d_metadata_tx;
+      uhd::rx_metadata_t d_metadata_rx;
+      double d_lo_offset_tx, d_lo_offset_rx;
+      float d_timeout_tx, d_timeout_rx;
 
       // Where all the action really happens
       int work(int noutput_items,
